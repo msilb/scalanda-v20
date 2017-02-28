@@ -247,7 +247,7 @@ final class OandaApiClient(env: Environment, authToken: String) extends CirceSup
 
   def modifyTradesDependentOrders(accountId: AccountID,
                                   tradeSpecifier: TradeSpecifier,
-                                  payload: TradesDependendOrdersModifyRequest): Future[TradesDependentOrdersModifyResponse] = {
+                                  payload: TradesDependentOrdersModifyRequest): Future[TradesDependentOrdersModifyResponse] = {
     val req = baseRequest
       .withMethod(PUT)
       .withUri(baseRestUri.withPath(basePath / "accounts" / accountId / "trades" / tradeSpecifier / "orders"))

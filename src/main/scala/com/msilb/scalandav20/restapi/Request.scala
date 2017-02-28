@@ -29,7 +29,7 @@ object Request {
   case class TradeClientExtensionsModifyRequest(clientExtensions: ClientExtensions) extends Request
 
   @JsonCodec
-  case class TradesDependendOrdersModifyRequest(takeProfit: Option[TakeProfitDetails] = None,
+  case class TradesDependentOrdersModifyRequest(takeProfit: Option[TakeProfitDetails] = None,
                                                 stopLoss: Option[StopLossDetails] = None,
                                                 trailingStopLoss: Option[TrailingStopLossDetails] = None) extends Request
 
