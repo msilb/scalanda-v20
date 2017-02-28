@@ -1,8 +1,8 @@
-package com.msilb.scalanda.model
+package com.msilb.scalandav20.model
 
 import java.time.Instant
 
-import com.msilb.scalanda.model.pricing.PriceValue
+import com.msilb.scalandav20.model.pricing.PriceValue
 import io.circe.generic.JsonCodec
 import io.circe.generic.extras.semiauto.{deriveEnumerationDecoder, deriveEnumerationEncoder}
 import io.circe.{Decoder, Encoder}

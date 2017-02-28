@@ -1,4 +1,4 @@
-package com.msilb.scalanda.restapi
+package com.msilb.scalandav20.restapi
 
 import java.time.Instant
 
@@ -13,18 +13,18 @@ import akka.http.scaladsl.model.headers.{Authorization, OAuth2BearerToken}
 import akka.http.scaladsl.unmarshalling.Unmarshal
 import akka.stream.ActorMaterializer
 import akka.stream.scaladsl.{JsonFraming, Source}
-import com.msilb.scalanda.common.Environment
-import com.msilb.scalanda.model.account.AccountID
-import com.msilb.scalanda.model.instrument.CandlestickGranularity.S5
-import com.msilb.scalanda.model.instrument.WeeklyAlignment.Friday
-import com.msilb.scalanda.model.instrument.{CandlestickGranularity, WeeklyAlignment}
-import com.msilb.scalanda.model.orders.{OrderID, OrderSpecifier, OrderState}
-import com.msilb.scalanda.model.pricing.PricingStreamItem
-import com.msilb.scalanda.model.primitives.InstrumentName
-import com.msilb.scalanda.model.trades.{TradeID, TradeSpecifier, TradeState}
-import com.msilb.scalanda.model.transactions._
-import com.msilb.scalanda.restapi.Request._
-import com.msilb.scalanda.restapi.Response._
+import com.msilb.scalandav20.common.Environment
+import com.msilb.scalandav20.model.account.AccountID
+import com.msilb.scalandav20.model.instrument.CandlestickGranularity.S5
+import com.msilb.scalandav20.model.instrument.WeeklyAlignment.Friday
+import com.msilb.scalandav20.model.instrument.{CandlestickGranularity, WeeklyAlignment}
+import com.msilb.scalandav20.model.orders.{OrderID, OrderSpecifier, OrderState}
+import com.msilb.scalandav20.model.pricing.PricingStreamItem
+import com.msilb.scalandav20.model.primitives.InstrumentName
+import com.msilb.scalandav20.model.trades.{TradeID, TradeSpecifier, TradeState}
+import com.msilb.scalandav20.model.transactions._
+import com.msilb.scalandav20.restapi.Request._
+import com.msilb.scalandav20.restapi.Response._
 import de.heikoseeberger.akkahttpcirce.CirceSupport
 import io.circe.Decoder
 import io.circe.parser._
@@ -372,9 +372,5 @@ final class OandaApiClient(env: Environment, authToken: String) extends CirceSup
         .via(JsonFraming.objectScanner(Int.MaxValue))
         .map(bs => decode[PricingStreamItem](bs.utf8String).right.get)
     }
-  }
-
-  def shutdown(): Unit = {
-    system.terminate()
   }
 }

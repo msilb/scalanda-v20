@@ -1,12 +1,12 @@
-package com.msilb.scalanda.model
+package com.msilb.scalandav20.model
 
 import java.time.Instant
 
-import com.msilb.scalanda.model.orders.Order.{StopLossOrder, TakeProfitOrder, TrailingStopLossOrder}
-import com.msilb.scalanda.model.orders.OrderID
-import com.msilb.scalanda.model.pricing.PriceValue
-import com.msilb.scalanda.model.primitives.{AccountUnits, InstrumentName}
-import com.msilb.scalanda.model.transactions.{ClientComment, ClientID, ClientTag, TransactionID}
+import com.msilb.scalandav20.model.orders.Order.{StopLossOrder, TakeProfitOrder, TrailingStopLossOrder}
+import com.msilb.scalandav20.model.orders.OrderID
+import com.msilb.scalandav20.model.pricing.PriceValue
+import com.msilb.scalandav20.model.primitives.{AccountUnits, InstrumentName}
+import com.msilb.scalandav20.model.transactions.{ClientComment, ClientID, ClientTag, TransactionID}
 import io.circe.generic.JsonCodec
 import io.circe.generic.extras.semiauto.{deriveEnumerationDecoder, deriveEnumerationEncoder}
 import io.circe.{Decoder, Encoder}

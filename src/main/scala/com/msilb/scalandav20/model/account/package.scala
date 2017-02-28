@@ -1,12 +1,12 @@
-package com.msilb.scalanda.model
+package com.msilb.scalandav20.model
 
 import java.time.Instant
 
-import com.msilb.scalanda.model.orders.{DynamicOrderState, Order}
-import com.msilb.scalanda.model.positions.{CalculatedPositionState, Position}
-import com.msilb.scalanda.model.primitives.{AccountUnits, Currency, DecimalNumber}
-import com.msilb.scalanda.model.trades.{CalculatedTradeState, TradeSummary}
-import com.msilb.scalanda.model.transactions.{Transaction, TransactionID}
+import com.msilb.scalandav20.model.orders.{DynamicOrderState, Order}
+import com.msilb.scalandav20.model.positions.{CalculatedPositionState, Position}
+import com.msilb.scalandav20.model.primitives.{AccountUnits, Currency, DecimalNumber}
+import com.msilb.scalandav20.model.trades.{CalculatedTradeState, TradeSummary}
+import com.msilb.scalandav20.model.transactions.{Transaction, TransactionID}
 import io.circe.generic.JsonCodec
 import io.circe.generic.extras.semiauto.{deriveEnumerationDecoder, deriveEnumerationEncoder}
 import io.circe.{Decoder, Encoder}

@@ -1,19 +1,18 @@
-package com.msilb.scalanda.restapi
+package com.msilb.scalandav20.restapi
 
 import java.time.Instant
 
-import com.msilb.scalanda.model.account._
-import com.msilb.scalanda.model.instrument.{Candlestick, CandlestickGranularity}
-import com.msilb.scalanda.model.orders.Order
-import com.msilb.scalanda.model.positions.Position
-import com.msilb.scalanda.model.pricing.Price
-import com.msilb.scalanda.model.primitives.{Instrument, InstrumentName}
-import com.msilb.scalanda.model.trades.Trade
-import com.msilb.scalanda.model.transactions.Transaction._
-import com.msilb.scalanda.model.transactions.{Transaction, TransactionFilter, TransactionID}
+import com.msilb.scalandav20.model.account._
+import com.msilb.scalandav20.model.instrument.{Candlestick, CandlestickGranularity}
+import com.msilb.scalandav20.model.orders.Order
+import com.msilb.scalandav20.model.positions.Position
+import com.msilb.scalandav20.model.pricing.Price
+import com.msilb.scalandav20.model.primitives.{Instrument, InstrumentName}
+import com.msilb.scalandav20.model.trades.Trade
+import com.msilb.scalandav20.model.transactions.Transaction._
+import com.msilb.scalandav20.model.transactions.{Transaction, TransactionFilter, TransactionID}
 import io.circe.generic.JsonCodec
-import io.circe.syntax._
-import io.circe.{Decoder, Encoder}
+import io.circe.Decoder
 import io.circe.java8.time._
 
 sealed trait Response
@@ -25,10 +24,6 @@ object Response {
       .flatMap(_ => c.as[F])
       .left
       .flatMap(_ => c.as[S])
-  }
-  private def encodeSuccessOrFailure[T, S <: T : Encoder, F <: T : Encoder]: Encoder[T] = Encoder.instance {
-    case r: F => r.asJson
-    case r: S => r.asJson
   }
 
   @JsonCodec
@@ -59,8 +54,6 @@ object Response {
 
     implicit val decodeConfigureAccountResponse: Decoder[ConfigureAccountResponse] =
       decodeSuccessOrFailure[ConfigureAccountResponse, ConfigureAccountSuccessResponse, ConfigureAccountFailureResponse]
-    implicit val encodeConfigureAccountResponse: Encoder[ConfigureAccountResponse] =
-      encodeSuccessOrFailure[ConfigureAccountResponse, ConfigureAccountSuccessResponse, ConfigureAccountFailureResponse]
 
   }
 
@@ -102,8 +95,6 @@ object Response {
 
     implicit val decodeCreateOrderResponse: Decoder[CreateOrderResponse] =
       decodeSuccessOrFailure[CreateOrderResponse, CreateOrderSuccessResponse, CreateOrderFailureResponse]
-    implicit val encodeCreateOrderResponse: Encoder[CreateOrderResponse] =
-      encodeSuccessOrFailure[CreateOrderResponse, CreateOrderSuccessResponse, CreateOrderFailureResponse]
 
   }
 
@@ -130,8 +121,6 @@ object Response {
 
     implicit val decodeReplaceOrderResponse: Decoder[ReplaceOrderResponse] =
       decodeSuccessOrFailure[ReplaceOrderResponse, ReplaceOrderSuccessResponse, ReplaceOrderFailureResponse]
-    implicit val encodeReplaceOrderResponse: Encoder[ReplaceOrderResponse] =
-      encodeSuccessOrFailure[ReplaceOrderResponse, ReplaceOrderSuccessResponse, ReplaceOrderFailureResponse]
 
   }
 
@@ -153,8 +142,6 @@ object Response {
 
     implicit val decodeCancelOrderResponse: Decoder[CancelOrderResponse] =
       decodeSuccessOrFailure[CancelOrderResponse, CancelOrderSuccessResponse, CancelOrderFailureResponse]
-    implicit val encodeCancelOrderResponse: Encoder[CancelOrderResponse] =
-      encodeSuccessOrFailure[CancelOrderResponse, CancelOrderSuccessResponse, CancelOrderFailureResponse]
 
   }
 
@@ -174,8 +161,6 @@ object Response {
 
     implicit val decodeOrderClientExtensionsModifyResponse: Decoder[OrderClientExtensionsModifyResponse] =
       decodeSuccessOrFailure[OrderClientExtensionsModifyResponse, OrderClientExtensionsModifySuccessResponse, OrderClientExtensionsModifyFailureResponse]
-    implicit val encodeOrderClientExtensionsModifyResponse: Encoder[OrderClientExtensionsModifyResponse] =
-      encodeSuccessOrFailure[OrderClientExtensionsModifyResponse, OrderClientExtensionsModifySuccessResponse, OrderClientExtensionsModifyFailureResponse]
 
   }
 
@@ -203,8 +188,6 @@ object Response {
 
     implicit val decodeCloseTradeResponse: Decoder[CloseTradeResponse] =
       decodeSuccessOrFailure[CloseTradeResponse, CloseTradeSuccessResponse, CloseTradeFailureResponse]
-    implicit val encodeCloseTradeResponse: Encoder[CloseTradeResponse] =
-      encodeSuccessOrFailure[CloseTradeResponse, CloseTradeSuccessResponse, CloseTradeFailureResponse]
   }
 
   sealed trait TradeClientExtensionsModifyResponse extends Response
@@ -223,8 +206,6 @@ object Response {
 
     implicit val decodeTradeClientExtensionsModifyResponse: Decoder[TradeClientExtensionsModifyResponse] =
       decodeSuccessOrFailure[TradeClientExtensionsModifyResponse, TradeClientExtensionsModifySuccessResponse, TradeClientExtensionsModifyFailureResponse]
-    implicit val encodeTradeClientExtensionsModifyResponse: Encoder[TradeClientExtensionsModifyResponse] =
-      encodeSuccessOrFailure[TradeClientExtensionsModifyResponse, TradeClientExtensionsModifySuccessResponse, TradeClientExtensionsModifyFailureResponse]
 
   }
 
@@ -259,8 +240,6 @@ object Response {
 
     implicit val decodeTradesDependentOrdersModifyResponse: Decoder[TradesDependentOrdersModifyResponse] =
       decodeSuccessOrFailure[TradesDependentOrdersModifyResponse, TradesDependentOrdersModifySuccessResponse, TradesDependentOrdersModifyFailureResponse]
-    implicit val encodeTradesDependentOrdersModifyResponse: Encoder[TradesDependentOrdersModifyResponse] =
-      encodeSuccessOrFailure[TradesDependentOrdersModifyResponse, TradesDependentOrdersModifySuccessResponse, TradesDependentOrdersModifyFailureResponse]
 
   }
 
@@ -294,8 +273,6 @@ object Response {
 
     implicit val decodeClosePositionResponse: Decoder[ClosePositionResponse] =
       decodeSuccessOrFailure[ClosePositionResponse, ClosePositionSuccessResponse, ClosePositionFailureResponse]
-    implicit val encodeClosePositionResponse: Encoder[ClosePositionResponse] =
-      encodeSuccessOrFailure[ClosePositionResponse, ClosePositionSuccessResponse, ClosePositionFailureResponse]
 
   }
 

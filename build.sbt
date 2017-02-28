@@ -39,3 +39,4 @@ libraryDependencies ++= {
 
 resolvers += Resolver.sonatypeRepo("releases")
 addCompilerPlugin("org.scalamacros" % "paradise" % "2.1.0" cross CrossVersion.full)
+addCompilerPlugin("org.psywerx.hairyfotr" %% "linter" % "0.1.17")

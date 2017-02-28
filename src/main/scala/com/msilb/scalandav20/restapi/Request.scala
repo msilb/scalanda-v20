@@ -1,8 +1,8 @@
-package com.msilb.scalanda.restapi
+package com.msilb.scalandav20.restapi
 
-import com.msilb.scalanda.model.orders.OrderRequest
-import com.msilb.scalanda.model.trades.ClientExtensions
-import com.msilb.scalanda.model.transactions.{StopLossDetails, TakeProfitDetails, TrailingStopLossDetails}
+import com.msilb.scalandav20.model.orders.OrderRequest
+import com.msilb.scalandav20.model.trades.ClientExtensions
+import com.msilb.scalandav20.model.transactions.{StopLossDetails, TakeProfitDetails, TrailingStopLossDetails}
 import io.circe.generic.JsonCodec
 
 sealed trait Request

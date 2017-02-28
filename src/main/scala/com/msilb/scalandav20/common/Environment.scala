@@ -1,4 +1,4 @@
-package com.msilb.scalanda.common
+package com.msilb.scalandav20.common
 
 sealed trait Environment {
   def restApiUrl(): String

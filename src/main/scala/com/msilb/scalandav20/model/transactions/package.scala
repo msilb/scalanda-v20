@@ -1,14 +1,14 @@
-package com.msilb.scalanda.model
+package com.msilb.scalandav20.model
 
 import java.time.Instant
 
-import com.msilb.scalanda.model.account.{AccountFinancingMode, AccountID}
-import com.msilb.scalanda.model.orders.TimeInForce.GTC
-import com.msilb.scalanda.model.orders._
-import com.msilb.scalanda.model.pricing.PriceValue
-import com.msilb.scalanda.model.primitives.{AccountUnits, Currency, DecimalNumber, InstrumentName}
-import com.msilb.scalanda.model.trades.{ClientExtensions, TradeID}
-import com.msilb.scalanda.model.transactions.TransactionType._
+import com.msilb.scalandav20.model.account.{AccountFinancingMode, AccountID}
+import com.msilb.scalandav20.model.orders.TimeInForce.GTC
+import com.msilb.scalandav20.model.orders._
+import com.msilb.scalandav20.model.pricing.PriceValue
+import com.msilb.scalandav20.model.primitives.{AccountUnits, Currency, DecimalNumber, InstrumentName}
+import com.msilb.scalandav20.model.trades.{ClientExtensions, TradeID}
+import com.msilb.scalandav20.model.transactions.TransactionType._
 import io.circe._
 import io.circe.generic.JsonCodec
 import io.circe.generic.extras.semiauto.{deriveEnumerationDecoder, deriveEnumerationEncoder}

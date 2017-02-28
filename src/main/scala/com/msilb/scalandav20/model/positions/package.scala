@@ -1,8 +1,8 @@
-package com.msilb.scalanda.model
+package com.msilb.scalandav20.model
 
-import com.msilb.scalanda.model.pricing.PriceValue
-import com.msilb.scalanda.model.primitives.{AccountUnits, DecimalNumber, InstrumentName}
-import com.msilb.scalanda.model.trades.TradeID
+import com.msilb.scalandav20.model.pricing.PriceValue
+import com.msilb.scalandav20.model.primitives.{AccountUnits, DecimalNumber, InstrumentName}
+import com.msilb.scalandav20.model.trades.TradeID
 import io.circe.generic.JsonCodec
 
 package object positions {

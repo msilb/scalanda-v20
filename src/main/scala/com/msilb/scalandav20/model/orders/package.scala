@@ -1,14 +1,14 @@
-package com.msilb.scalanda.model
+package com.msilb.scalandav20.model
 
 import java.time.Instant
 
-import com.msilb.scalanda.model.orders.OrderPositionFill.DEFAULT
-import com.msilb.scalanda.model.orders.OrderType._
-import com.msilb.scalanda.model.orders.TimeInForce.{FOK, GTC}
-import com.msilb.scalanda.model.pricing.PriceValue
-import com.msilb.scalanda.model.primitives.{DecimalNumber, InstrumentName}
-import com.msilb.scalanda.model.trades.{ClientExtensions, TradeID}
-import com.msilb.scalanda.model.transactions._
+import com.msilb.scalandav20.model.orders.OrderPositionFill.DEFAULT
+import com.msilb.scalandav20.model.orders.OrderType._
+import com.msilb.scalandav20.model.orders.TimeInForce.{FOK, GTC}
+import com.msilb.scalandav20.model.pricing.PriceValue
+import com.msilb.scalandav20.model.primitives.{DecimalNumber, InstrumentName}
+import com.msilb.scalandav20.model.trades.{ClientExtensions, TradeID}
+import com.msilb.scalandav20.model.transactions._
 import io.circe.generic.JsonCodec
 import io.circe.generic.extras.semiauto.{deriveEnumerationDecoder, deriveEnumerationEncoder}
 import io.circe.syntax._

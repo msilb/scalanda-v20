@@ -1,4 +1,4 @@
-package com.msilb.scalanda.model
+package com.msilb.scalandav20.model
 
 import io.circe.generic.JsonCodec
 import io.circe.generic.extras.semiauto.{deriveEnumerationDecoder, deriveEnumerationEncoder}
