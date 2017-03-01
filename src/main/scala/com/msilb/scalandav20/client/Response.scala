@@ -1,4 +1,4 @@
-package com.msilb.scalandav20.restapi
+package com.msilb.scalandav20.client
 
 import java.time.Instant
 
@@ -19,12 +19,19 @@ sealed trait Response
 
 object Response {
 
+  type GenericResponse[T <: Response] = Either[ErrorResponse, T]
+
   private def decodeSuccessOrFailure[T, S <: T : Decoder, F <: T : Decoder]: Decoder[T] = Decoder.instance { c =>
     c.downField("errorMessage").as[String]
       .flatMap(_ => c.as[F])
       .left
       .flatMap(_ => c.as[S])
   }
+
+  @JsonCodec
+  case class ErrorResponse(lastTransactionID: Option[TransactionID],
+                           errorCode: Option[String],
+                           errorMessage: String) extends Response
 
   @JsonCodec
   case class AccountsListResponse(accounts: Seq[AccountProperties]) extends Response

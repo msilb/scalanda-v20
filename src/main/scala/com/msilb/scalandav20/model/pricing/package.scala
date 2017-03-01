@@ -11,7 +11,7 @@ import io.circe.syntax._
 
 package object pricing {
 
-  type PriceValue = String
+  type PriceValue = Double
 
   sealed trait PricingStreamItem
 

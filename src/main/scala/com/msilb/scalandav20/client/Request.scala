@@ -1,4 +1,4 @@
-package com.msilb.scalandav20.restapi
+package com.msilb.scalandav20.client
 
 import com.msilb.scalandav20.model.orders.OrderRequest
 import com.msilb.scalandav20.model.trades.ClientExtensions

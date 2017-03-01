@@ -22,18 +22,14 @@ scalacOptions := Seq(
 
 libraryDependencies ++= {
   val circeV = "0.7.0"
-  val scalaTestV = "3.0.1"
   val akkaHttpV = "10.0.4"
-  val akkaHttpCirceV = "1.12.0"
   Seq(
     "com.typesafe.akka" %% "akka-http" % akkaHttpV,
-    "de.heikoseeberger" %% "akka-http-circe" % akkaHttpCirceV,
     "io.circe" %% "circe-core" % circeV,
     "io.circe" %% "circe-generic" % circeV,
     "io.circe" %% "circe-parser" % circeV,
     "io.circe" %% "circe-java8" % circeV,
-    "io.circe" %% "circe-generic-extras" % circeV,
-    "org.scalatest" %% "scalatest" % scalaTestV % "test"
+    "io.circe" %% "circe-generic-extras" % circeV
   )
 }
 
