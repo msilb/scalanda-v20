@@ -1,5 +1,7 @@
 ### Note: this is Scala wrapper for [Oanda REST API *v2*](http://developer.oanda.com/rest-live-v20/introduction). If you are looking for a Scala wrapper for the older [Oanda REST API *v1*](http://developer.oanda.com/rest-live/introduction), please have a look at the [scalanda](https://github.com/msilb/scalanda) project.
 
+[![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.msilb/scalanda-v20_2.12/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.msilb/scalanda-v20_2.12)
+
 # scalanda-v20
 
 scalanda-v20 is a light-weight Scala/Akka/Spray-based wrapper for Oanda's REST and Stream API v20, which supports completely asynchronous non-blocking communication with the API. If you are using (or planning to use) Oanda as a broker for your automated trading needs, this library might be of interest.
