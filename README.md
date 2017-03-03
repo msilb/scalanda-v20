@@ -28,9 +28,37 @@ where `Practice` indicates that you want to connect to Oanda's fxTrade Practice 
 
 ## Usage examples
 
-Some sample requests can be found [here](https://github.com/msilb/scalanda-v20/blob/master/src/main/scala/com/msilb/scalandav20/sample/SampleRequests.scala).
+Here is a quick example of how to fetch historical data and place a limit order at the high of the previous candle:
 
-For further information on request / response parameters see Oanda API specs, e.g. specs for the [accounts](http://developer.oanda.com/rest-live-v20/account-ep) endpoint.
+```scala
+val orderIdFut = for {
+  candlesticks <- client.getCandlesticks(
+    "EUR_USD",
+    granularity = Some(H1),
+    count = Some(4),
+    includeFirst = Some(false)
+  ).collect { case Right(r) => r.candles.filter(_.complete) }
+  marketOrder <- client.createOrder(
+    accountId,
+    CreateOrderRequest(
+      LimitOrderRequest(
+        instrument = "EUR_USD",
+        price = (math floor candlesticks.last.mid.get.h * 100000) / 100000,
+        units = -1500,
+        takeProfitOnFill = Some(TakeProfitDetails(price = 1.09))
+      )
+    )
+  ).collect { case Right(r) => r }
+} yield marketOrder match {
+  case r: CreateOrderSuccessResponse => r.orderCreateTransaction.id
+  case r: CreateOrderFailureResponse => throw new RuntimeException(r.errorMessage)
+}
+println("New Limit Order created @ previous high with order ID " + Await.result(orderIdFut, Duration.Inf))
+```
+
+Further sample requests can be found [here](https://github.com/msilb/scalanda-v20/blob/master/src/main/scala/com/msilb/scalandav20/sample/SampleRequests.scala).
+
+For more detailed information on request / response parameters see Oanda API specs, e.g. specs for the [accounts](http://developer.oanda.com/rest-live-v20/account-ep) endpoint.
 
 # Contributing
 
