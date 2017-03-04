@@ -344,7 +344,7 @@ class OandaApiClient(env: Environment, authToken: String) extends HttpRequestSer
 
   def getTransactionsStream(accountId: AccountID): Future[Source[TransactionStreamItem, Any]] = {
     val req = baseRequest.withUri(baseStreamUri.withPath(basePath / "accounts" / accountId / "transactions" / "stream"))
-    Http().singleRequest(req).map { response =>
+    execute(req).map { response =>
       response.entity.dataBytes
         .via(JsonFraming.objectScanner(Int.MaxValue))
         .map(bs => decode[TransactionStreamItem](bs.utf8String).right.get)
@@ -378,7 +378,7 @@ class OandaApiClient(env: Environment, authToken: String) extends HttpRequestSer
           .withPath(basePath / "accounts" / accountId / "pricing" / "stream")
           .withQuery(Query(queryMap))
       )
-    Http().singleRequest(req).map { response =>
+    execute(req).map { response =>
       response.entity.dataBytes
         .via(JsonFraming.objectScanner(Int.MaxValue))
         .map(bs => decode[PricingStreamItem](bs.utf8String).right.get)
