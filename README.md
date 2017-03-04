@@ -1,6 +1,8 @@
 ### Note: this is Scala wrapper for [Oanda REST API *v2*](http://developer.oanda.com/rest-live-v20/introduction). If you are looking for a Scala wrapper for the older [Oanda REST API *v1*](http://developer.oanda.com/rest-live/introduction), please have a look at the [scalanda](https://github.com/msilb/scalanda) project.
 
-[![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.msilb/scalanda-v20_2.12/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.msilb/scalanda-v20_2.12)
+[![Maven Central](https://img.shields.io/maven-central/v/com.msilb/scalanda-v20_2.12.svg)]()
+[![Travis](https://img.shields.io/travis/msilb/scalanda-v20.svg)]()
+[![Codecov](https://img.shields.io/codecov/c/github/msilb/scalanda-v20.svg)]()
 
 # scalanda-v20
 
