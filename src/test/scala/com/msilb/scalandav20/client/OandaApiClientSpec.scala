@@ -2,14 +2,20 @@ package com.msilb.scalandav20.client
 
 import java.time.Instant
 
+import akka.http.scaladsl.model.ContentTypes.`application/json`
+import akka.http.scaladsl.model.HttpMethods._
 import akka.http.scaladsl.model.Uri.Query
 import akka.http.scaladsl.model._
+import com.msilb.scalandav20.client.Request.AccountConfigChangeRequest
+import com.msilb.scalandav20.client.Response.ConfigureAccountResponse.ConfigureAccountSuccessResponse
 import com.msilb.scalandav20.client.Response.{AccountDetailsResponse, AccountInstrumentsResponse, AccountSummaryResponse, AccountsListResponse}
 import com.msilb.scalandav20.common.Environment.Practice
 import com.msilb.scalandav20.model.account.{Account, AccountProperties, AccountSummary}
 import com.msilb.scalandav20.model.positions.{Position, PositionSide}
 import com.msilb.scalandav20.model.primitives.Instrument
 import com.msilb.scalandav20.model.primitives.InstrumentType.CURRENCY
+import com.msilb.scalandav20.model.transactions.Transaction.ClientConfigureTransaction
+import com.msilb.scalandav20.model.transactions.TransactionType.CLIENT_CONFIGURE
 import org.scalamock.function.MockFunction1
 import org.scalamock.scalatest.MockFactory
 import org.scalatest.{FlatSpec, Matchers}
@@ -40,7 +46,7 @@ class OandaApiClientSpec extends FlatSpec with Matchers with MockFactory {
         Future.successful(
           HttpResponse(
             entity = HttpEntity(
-              ContentTypes.`application/json`,
+              `application/json`,
               """
                 |{
                 |  "accounts": [
@@ -84,7 +90,7 @@ class OandaApiClientSpec extends FlatSpec with Matchers with MockFactory {
         Future.successful(
           HttpResponse(
             entity = HttpEntity(
-              ContentTypes.`application/json`,
+              `application/json`,
               """
                 |{
                 |  "account": {
@@ -703,7 +709,7 @@ class OandaApiClientSpec extends FlatSpec with Matchers with MockFactory {
         Future.successful(
           HttpResponse(
             entity = HttpEntity(
-              ContentTypes.`application/json`,
+              `application/json`,
               """
                 |{
                 |  "account": {
@@ -803,7 +809,7 @@ class OandaApiClientSpec extends FlatSpec with Matchers with MockFactory {
         Future.successful(
           HttpResponse(
             entity = HttpEntity(
-              ContentTypes.`application/json`,
+              `application/json`,
               """
                 |{
                 |  "instruments": [
@@ -853,6 +859,71 @@ class OandaApiClientSpec extends FlatSpec with Matchers with MockFactory {
               0.02
             )
           )
+        )
+      )
+    )
+  }
+
+  it should "successfully configure account margin rate and set new alias" in {
+
+    client
+      .mock
+      .expects(
+        client.baseRequest
+          .withMethod(PATCH)
+          .withUri(
+            client.baseRestUri.withPath(
+              client.basePath / "accounts" / "12345-6789" / "configuration"
+            )
+          )
+          .withEntity(`application/json`, "{\"alias\":\"new_acct_alias\",\"marginRate\":\"0.02\"}")
+      )
+      .returning(
+        Future.successful(
+          HttpResponse(
+            entity = HttpEntity(
+              `application/json`,
+              """
+                |{
+                |  "clientConfigureTransaction": {
+                |    "accountID": "12345-6789",
+                |    "batchID": "6357",
+                |    "id": "6357",
+                |    "marginRate": "0.02",
+                |    "alias": "new_acct_alias",
+                |    "time": "2016-06-22T18:32:01.336826542Z",
+                |    "type": "CLIENT_CONFIGURE",
+                |    "userID": 123456
+                |  },
+                |  "lastTransactionID": "6357"
+                |}
+              """.stripMargin
+            )
+          )
+        )
+      )
+
+    val configureAccountF = client.changeAccountConfig(
+      "12345-6789",
+      AccountConfigChangeRequest(marginRate = Some("0.02"), alias = Some("new_acct_alias"))
+    )
+
+    val configureAccount = Await.result(configureAccountF, 1.second)
+
+    assert(
+      configureAccount == Right(
+        ConfigureAccountSuccessResponse(
+          ClientConfigureTransaction(
+            6357,
+            Instant.parse("2016-06-22T18:32:01.336826542Z"),
+            123456,
+            "12345-6789",
+            6357,
+            CLIENT_CONFIGURE,
+            Some("new_acct_alias"),
+            0.02
+          ),
+          6357
         )
       )
     )

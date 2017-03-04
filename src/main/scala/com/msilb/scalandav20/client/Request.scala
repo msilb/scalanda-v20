@@ -10,7 +10,8 @@ sealed trait Request
 object Request {
 
   @JsonCodec
-  case class AccountConfigChangeRequest(alias: Option[String], marginRate: Option[String]) extends Request
+  case class AccountConfigChangeRequest(alias: Option[String] = None,
+                                        marginRate: Option[String] = None) extends Request
 
   @JsonCodec
   case class CreateOrderRequest(order: OrderRequest) extends Request
