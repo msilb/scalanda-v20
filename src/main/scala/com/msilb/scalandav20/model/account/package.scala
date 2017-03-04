@@ -71,9 +71,9 @@ package object account {
 
     def withdrawalLimit: AccountUnits
 
-    def marginCallMarginUsed: AccountUnits
+    def marginCallMarginUsed: Option[AccountUnits]
 
-    def marginCallPercent: DecimalNumber
+    def marginCallPercent: Option[DecimalNumber]
 
     def lastTransactionID: TransactionID
   }
@@ -106,8 +106,8 @@ package object account {
                             override val marginCloseoutMarginUsed: AccountUnits,
                             override val marginCloseoutPercent: DecimalNumber,
                             override val withdrawalLimit: AccountUnits,
-                            override val marginCallMarginUsed: AccountUnits,
-                            override val marginCallPercent: DecimalNumber,
+                            override val marginCallMarginUsed: Option[AccountUnits],
+                            override val marginCallPercent: Option[DecimalNumber],
                             override val lastTransactionID: TransactionID) extends AccountBase
 
   @JsonCodec
@@ -138,8 +138,8 @@ package object account {
                      override val marginCloseoutMarginUsed: AccountUnits,
                      override val marginCloseoutPercent: DecimalNumber,
                      override val withdrawalLimit: AccountUnits,
-                     override val marginCallMarginUsed: AccountUnits,
-                     override val marginCallPercent: DecimalNumber,
+                     override val marginCallMarginUsed: Option[AccountUnits],
+                     override val marginCallPercent: Option[DecimalNumber],
                      override val lastTransactionID: TransactionID,
                      trades: Seq[TradeSummary],
                      positions: Seq[Position],

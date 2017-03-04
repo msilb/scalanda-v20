@@ -15,8 +15,8 @@ import com.msilb.scalandav20.model.trades.ClientExtensions
 import com.msilb.scalandav20.model.transactions.TransactionFilter.{MARKET_ORDER, STOP_LOSS_ORDER}
 import com.msilb.scalandav20.model.transactions.{StopLossDetails, TakeProfitDetails, TrailingStopLossDetails}
 
+import scala.concurrent.Await
 import scala.concurrent.duration._
-import scala.concurrent.{Await, ExecutionContext}
 
 object SampleRequests extends App {
 
@@ -25,7 +25,7 @@ object SampleRequests extends App {
 
   implicit val system = client.system
   implicit val materializer = client.materializer
-  implicit val ec: ExecutionContext = client.ec
+  implicit val ec = client.ec
 
   val accountsListFut = client.getAccountsList
   println(Await.result(accountsListFut, 60.seconds))
