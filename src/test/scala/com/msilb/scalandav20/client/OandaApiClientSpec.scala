@@ -7,15 +7,16 @@ import akka.http.scaladsl.model.HttpMethods._
 import akka.http.scaladsl.model.Uri.Query
 import akka.http.scaladsl.model._
 import com.msilb.scalandav20.client.Request.AccountConfigChangeRequest
-import com.msilb.scalandav20.client.Response.ConfigureAccountResponse.ConfigureAccountSuccessResponse
+import com.msilb.scalandav20.client.Response.ConfigureAccountResponse.{ConfigureAccountFailureResponse, ConfigureAccountSuccessResponse}
 import com.msilb.scalandav20.client.Response.{AccountDetailsResponse, AccountInstrumentsResponse, AccountSummaryResponse, AccountsListResponse}
 import com.msilb.scalandav20.common.Environment.Practice
 import com.msilb.scalandav20.model.account.{Account, AccountProperties, AccountSummary}
 import com.msilb.scalandav20.model.positions.{Position, PositionSide}
 import com.msilb.scalandav20.model.primitives.Instrument
 import com.msilb.scalandav20.model.primitives.InstrumentType.CURRENCY
-import com.msilb.scalandav20.model.transactions.Transaction.ClientConfigureTransaction
-import com.msilb.scalandav20.model.transactions.TransactionType.CLIENT_CONFIGURE
+import com.msilb.scalandav20.model.transactions.Transaction.{ClientConfigureRejectTransaction, ClientConfigureTransaction}
+import com.msilb.scalandav20.model.transactions.TransactionRejectReason.MARGIN_RATE_WOULD_TRIGGER_CLOSEOUT
+import com.msilb.scalandav20.model.transactions.TransactionType.{CLIENT_CONFIGURE, CLIENT_CONFIGURE_REJECT}
 import org.scalamock.function.MockFunction1
 import org.scalamock.scalatest.MockFactory
 import org.scalatest.{FlatSpec, Matchers}
@@ -924,6 +925,78 @@ class OandaApiClientSpec extends FlatSpec with Matchers with MockFactory {
             0.02
           ),
           6357
+        )
+      )
+    )
+  }
+
+  it should "fail configuring account if marginRate is set too high" in {
+
+    client
+      .mock
+      .expects(
+        client.baseRequest
+          .withMethod(PATCH)
+          .withUri(
+            client.baseRestUri.withPath(
+              client.basePath / "accounts" / "12345-6789" / "configuration"
+            )
+          )
+          .withEntity(`application/json`, "{\"marginRate\":\"10000000000000\"}")
+      )
+      .returning(
+        Future.successful(
+          HttpResponse(
+            entity = HttpEntity(
+              `application/json`,
+              """
+                |{
+                |  "clientConfigureRejectTransaction": {
+                |    "accountID": "101-004-1666683-001",
+                |    "batchID": "375",
+                |    "id": "375",
+                |    "marginRate": "10000000000000",
+                |    "rejectReason": "MARGIN_RATE_WOULD_TRIGGER_CLOSEOUT",
+                |    "time": "2017-03-07T13:30:36.698714392Z",
+                |    "type": "CLIENT_CONFIGURE_REJECT",
+                |    "userID": 1666683
+                |  },
+                |  "errorCode": "MARGIN_RATE_WOULD_TRIGGER_CLOSEOUT",
+                |  "errorMessage": "The margin rate provided would cause an immediate margin closeout",
+                |  "lastTransactionID": "375"
+                |}
+              """.stripMargin
+            )
+          )
+        )
+      )
+
+    val configureAccountF = client.changeAccountConfig(
+      "12345-6789",
+      AccountConfigChangeRequest(marginRate = Some("10000000000000"))
+    )
+
+    val configureAccount = Await.result(configureAccountF, 1.second)
+
+    assert(
+      configureAccount == Right(
+        ConfigureAccountFailureResponse(
+          Some(
+            ClientConfigureRejectTransaction(
+              375,
+              Instant.parse("2017-03-07T13:30:36.698714392Z"),
+              1666683,
+              "101-004-1666683-001",
+              375,
+              CLIENT_CONFIGURE_REJECT,
+              None,
+              1.0E13,
+              Some(MARGIN_RATE_WOULD_TRIGGER_CLOSEOUT)
+            )
+          ),
+          Some(375),
+          Some("MARGIN_RATE_WOULD_TRIGGER_CLOSEOUT"),
+          "The margin rate provided would cause an immediate margin closeout"
         )
       )
     )
