@@ -41,7 +41,7 @@ package object orders {
                            instrument: InstrumentName,
                            units: DecimalNumber,
                            timeInForce: TimeInForce,
-                           priceBound: PriceValue,
+                           priceBound: Option[PriceValue],
                            positionFill: Option[OrderPositionFill],
                            tradeClose: Option[MarketOrderTradeClose],
                            longPositionCloseout: Option[MarketOrderPositionCloseout],
@@ -95,7 +95,7 @@ package object orders {
                          instrument: InstrumentName,
                          units: DecimalNumber,
                          price: PriceValue,
-                         priceBound: PriceValue,
+                         priceBound: Option[PriceValue],
                          timeInForce: TimeInForce,
                          gtdTime: Option[Instant],
                          positionFill: Option[OrderPositionFill],
@@ -122,7 +122,7 @@ package object orders {
                                     instrument: InstrumentName,
                                     units: DecimalNumber,
                                     price: PriceValue,
-                                    priceBound: PriceValue,
+                                    priceBound: Option[PriceValue],
                                     timeInForce: TimeInForce,
                                     gtdTime: Option[Instant],
                                     positionFill: Option[OrderPositionFill],
@@ -294,6 +294,8 @@ package object orders {
     case object REDUCE_ONLY extends OrderPositionFill
 
     case object POSITION_DEFAULT extends OrderPositionFill
+
+    case object POSITION_REDUCE_ONLY extends OrderPositionFill
 
     case object DEFAULT extends OrderPositionFill
 

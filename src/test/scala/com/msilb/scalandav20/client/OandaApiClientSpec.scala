@@ -8,15 +8,29 @@ import akka.http.scaladsl.model.Uri.Query
 import akka.http.scaladsl.model._
 import com.msilb.scalandav20.client.Request.AccountConfigChangeRequest
 import com.msilb.scalandav20.client.Response.ConfigureAccountResponse.{ConfigureAccountFailureResponse, ConfigureAccountSuccessResponse}
-import com.msilb.scalandav20.client.Response.{AccountDetailsResponse, AccountInstrumentsResponse, AccountSummaryResponse, AccountsListResponse}
+import com.msilb.scalandav20.client.Response._
 import com.msilb.scalandav20.common.Environment.Practice
-import com.msilb.scalandav20.model.account.{Account, AccountProperties, AccountSummary}
+import com.msilb.scalandav20.model.account._
+import com.msilb.scalandav20.model.orders.MarketOrderTradeClose
+import com.msilb.scalandav20.model.orders.Order.{LimitOrder, MarketOrder, TakeProfitOrder, TrailingStopLossOrder}
+import com.msilb.scalandav20.model.orders.OrderPositionFill.{DEFAULT, POSITION_DEFAULT, POSITION_REDUCE_ONLY, REDUCE_ONLY}
+import com.msilb.scalandav20.model.orders.OrderState.{CANCELLED, FILLED}
+import com.msilb.scalandav20.model.orders.OrderType.{LIMIT, MARKET, TAKE_PROFIT, TRAILING_STOP_LOSS}
+import com.msilb.scalandav20.model.orders.TimeInForce.{FOK, GTC}
 import com.msilb.scalandav20.model.positions.{Position, PositionSide}
 import com.msilb.scalandav20.model.primitives.Instrument
 import com.msilb.scalandav20.model.primitives.InstrumentType.CURRENCY
-import com.msilb.scalandav20.model.transactions.Transaction.{ClientConfigureRejectTransaction, ClientConfigureTransaction}
-import com.msilb.scalandav20.model.transactions.TransactionRejectReason.MARGIN_RATE_WOULD_TRIGGER_CLOSEOUT
-import com.msilb.scalandav20.model.transactions.TransactionType.{CLIENT_CONFIGURE, CLIENT_CONFIGURE_REJECT}
+import com.msilb.scalandav20.model.trades.TradeState.CLOSED
+import com.msilb.scalandav20.model.trades.TradeSummary
+import com.msilb.scalandav20.model.transactions.LimitOrderReason.CLIENT_ORDER
+import com.msilb.scalandav20.model.transactions.MarketOrderReason.TRADE_CLOSE
+import com.msilb.scalandav20.model.transactions.OrderCancelReason.{CLIENT_REQUEST, LINKED_TRADE_CLOSED}
+import com.msilb.scalandav20.model.transactions.OrderFillReason.{LIMIT_ORDER, MARKET_ORDER_TRADE_CLOSE}
+import com.msilb.scalandav20.model.transactions.TakeProfitOrderReason.ON_FILL
+import com.msilb.scalandav20.model.transactions.Transaction.{ClientConfigureRejectTransaction, ClientConfigureTransaction, LimitOrderRejectTransaction, LimitOrderTransaction, MarketOrderTransaction, OrderCancelTransaction, OrderFillTransaction, TakeProfitOrderTransaction, TrailingStopLossOrderTransaction}
+import com.msilb.scalandav20.model.transactions.TransactionRejectReason.{MARGIN_RATE_WOULD_TRIGGER_CLOSEOUT, PRICE_PRECISION_EXCEEDED}
+import com.msilb.scalandav20.model.transactions.TransactionType.{CLIENT_CONFIGURE, CLIENT_CONFIGURE_REJECT, LIMIT_ORDER_REJECT, MARKET_ORDER, ORDER_CANCEL, ORDER_FILL, TAKE_PROFIT_ORDER, TRAILING_STOP_LOSS_ORDER}
+import com.msilb.scalandav20.model.transactions._
 import org.scalamock.function.MockFunction1
 import org.scalamock.scalatest.MockFactory
 import org.scalatest.{FlatSpec, Matchers}
@@ -997,6 +1011,1054 @@ class OandaApiClientSpec extends FlatSpec with Matchers with MockFactory {
           Some(375),
           Some("MARGIN_RATE_WOULD_TRIGGER_CLOSEOUT"),
           "The margin rate provided would cause an immediate margin closeout"
+        )
+      )
+    )
+  }
+
+  it should "retrieve account changes since transaction" in {
+
+    client
+      .mock
+      .expects(
+        client.baseRequest.withUri(
+          client.baseRestUri.withPath(
+            client.basePath / "accounts" / "12345-6789" / "changes"
+          ).withQuery(
+            Query("sinceTransactionID" -> "360")
+          )
+        )
+      )
+      .returning(
+        Future.successful(
+          HttpResponse(
+            entity = HttpEntity(
+              `application/json`,
+              """
+                |{
+                |    "changes": {
+                |        "ordersCancelled": [
+                |            {
+                |                "cancelledTime": "2017-03-01T08:40:13.873310851Z",
+                |                "cancellingTransactionID": "365",
+                |                "createTime": "2017-03-01T08:39:58.958592992Z",
+                |                "id": "362",
+                |                "price": "1.09000",
+                |                "state": "CANCELLED",
+                |                "timeInForce": "GTC",
+                |                "tradeID": "361",
+                |                "triggerCondition": "TRIGGER_DEFAULT",
+                |                "type": "TAKE_PROFIT"
+                |            },
+                |            {
+                |                "cancelledTime": "2017-03-01T08:41:06.870753569Z",
+                |                "cancellingTransactionID": "367",
+                |                "createTime": "2017-03-01T08:40:47.227998652Z",
+                |                "id": "366",
+                |                "instrument": "EUR_USD",
+                |                "partialFill": "DEFAULT_FILL",
+                |                "positionFill": "POSITION_DEFAULT",
+                |                "price": "1.05570",
+                |                "state": "CANCELLED",
+                |                "takeProfitOnFill": {
+                |                    "price": "1.09000",
+                |                    "timeInForce": "GTC"
+                |                },
+                |                "timeInForce": "GTC",
+                |                "triggerCondition": "TRIGGER_DEFAULT",
+                |                "type": "LIMIT",
+                |                "units": "-1500"
+                |            },
+                |            {
+                |                "cancelledTime": "2017-03-07T15:53:59.947555381Z",
+                |                "cancellingTransactionID": "377",
+                |                "createTime": "2017-03-07T13:29:56.714809695Z",
+                |                "id": "372",
+                |                "price": "1.05569",
+                |                "state": "CANCELLED",
+                |                "timeInForce": "GTC",
+                |                "tradeID": "371",
+                |                "triggerCondition": "TRIGGER_DEFAULT",
+                |                "type": "TAKE_PROFIT"
+                |            }
+                |        ],
+                |        "ordersCreated": [],
+                |        "ordersFilled": [
+                |            {
+                |                "createTime": "2017-03-01T08:39:58.958592992Z",
+                |                "filledTime": "2017-03-01T08:39:58.958592992Z",
+                |                "fillingTransactionID": "361",
+                |                "id": "360",
+                |                "instrument": "EUR_USD",
+                |                "partialFill": "DEFAULT_FILL",
+                |                "positionFill": "POSITION_DEFAULT",
+                |                "price": "1.05570",
+                |                "state": "FILLED",
+                |                "takeProfitOnFill": {
+                |                    "price": "1.09000",
+                |                    "timeInForce": "GTC"
+                |                },
+                |                "timeInForce": "GTC",
+                |                "tradeOpenedID": "361",
+                |                "triggerCondition": "TRIGGER_DEFAULT",
+                |                "type": "LIMIT",
+                |                "units": "1500"
+                |            },
+                |            {
+                |                "createTime": "2017-03-01T08:40:13.873310851Z",
+                |                "filledTime": "2017-03-01T08:40:13.873310851Z",
+                |                "fillingTransactionID": "364",
+                |                "id": "363",
+                |                "instrument": "EUR_USD",
+                |                "positionFill": "POSITION_REDUCE_ONLY",
+                |                "state": "FILLED",
+                |                "timeInForce": "FOK",
+                |                "tradeClosedIDs": [
+                |                    "361"
+                |                ],
+                |                "type": "MARKET",
+                |                "units": "-1500"
+                |            },
+                |            {
+                |                "createTime": "2017-03-07T13:29:56.714809695Z",
+                |                "filledTime": "2017-03-07T13:29:56.714809695Z",
+                |                "fillingTransactionID": "371",
+                |                "id": "370",
+                |                "instrument": "EUR_USD",
+                |                "positionFill": "POSITION_DEFAULT",
+                |                "state": "FILLED",
+                |                "takeProfitOnFill": {
+                |                    "price": "1.05569",
+                |                    "timeInForce": "GTC"
+                |                },
+                |                "timeInForce": "FOK",
+                |                "tradeOpenedID": "371",
+                |                "trailingStopLossOnFill": {
+                |                    "distance": "0.00159",
+                |                    "timeInForce": "GTC"
+                |                },
+                |                "type": "MARKET",
+                |                "units": "-2500"
+                |            },
+                |            {
+                |                "createTime": "2017-03-07T13:29:56.714809695Z",
+                |                "distance": "0.00159",
+                |                "filledTime": "2017-03-07T15:53:59.947555381Z",
+                |                "fillingTransactionID": "376",
+                |                "id": "373",
+                |                "state": "FILLED",
+                |                "timeInForce": "GTC",
+                |                "tradeClosedIDs": [
+                |                    "371"
+                |                ],
+                |                "tradeID": "371",
+                |                "trailingStopValue": "1.05773",
+                |                "triggerCondition": "TRIGGER_DEFAULT",
+                |                "type": "TRAILING_STOP_LOSS"
+                |            }
+                |        ],
+                |        "ordersTriggered": [],
+                |        "positions": [
+                |            {
+                |                "instrument": "EUR_USD",
+                |                "long": {
+                |                    "pl": "15.3482",
+                |                    "resettablePL": "15.3482",
+                |                    "units": "0"
+                |                },
+                |                "pl": "11.9982",
+                |                "resettablePL": "11.9982",
+                |                "short": {
+                |                    "pl": "-3.3500",
+                |                    "resettablePL": "-3.3500",
+                |                    "units": "0"
+                |                }
+                |            }
+                |        ],
+                |        "tradesClosed": [
+                |            {
+                |                "averageClosePrice": "1.05364",
+                |                "closeTime": "2017-03-01T08:40:13.873310851Z",
+                |                "closingTransactionIDs": [
+                |                    "364"
+                |                ],
+                |                "currentUnits": "0",
+                |                "financing": "0.0000",
+                |                "id": "361",
+                |                "initialUnits": "1500",
+                |                "instrument": "EUR_USD",
+                |                "openTime": "2017-03-01T08:39:58.958592992Z",
+                |                "price": "1.05363",
+                |                "realizedPL": "0.0150",
+                |                "state": "CLOSED",
+                |                "takeProfitOrderID": "362"
+                |            },
+                |            {
+                |                "averageClosePrice": "1.05774",
+                |                "closeTime": "2017-03-07T15:53:59.947555381Z",
+                |                "closingTransactionIDs": [
+                |                    "376"
+                |                ],
+                |                "currentUnits": "0",
+                |                "financing": "-0.0011",
+                |                "id": "371",
+                |                "initialUnits": "-2500",
+                |                "instrument": "EUR_USD",
+                |                "openTime": "2017-03-07T13:29:56.714809695Z",
+                |                "price": "1.05735",
+                |                "realizedPL": "-0.9750",
+                |                "state": "CLOSED",
+                |                "takeProfitOrderID": "372",
+                |                "trailingStopLossOrderID": "373"
+                |            }
+                |        ],
+                |        "tradesOpened": [],
+                |        "tradesReduced": [],
+                |        "transactions": [
+                |            {
+                |                "accountBalance": "100028.4167",
+                |                "accountID": "101-004-1666683-001",
+                |                "batchID": "360",
+                |                "financing": "0.0000",
+                |                "id": "361",
+                |                "instrument": "EUR_USD",
+                |                "orderID": "360",
+                |                "pl": "0.0000",
+                |                "price": "1.05363",
+                |                "reason": "LIMIT_ORDER",
+                |                "time": "2017-03-01T08:39:58.958592992Z",
+                |                "tradeOpened": {
+                |                    "tradeID": "361",
+                |                    "units": "1500"
+                |                },
+                |                "type": "ORDER_FILL",
+                |                "units": "1500",
+                |                "userID": 1666683
+                |            },
+                |            {
+                |                "accountID": "101-004-1666683-001",
+                |                "batchID": "360",
+                |                "id": "362",
+                |                "price": "1.09000",
+                |                "reason": "ON_FILL",
+                |                "time": "2017-03-01T08:39:58.958592992Z",
+                |                "timeInForce": "GTC",
+                |                "tradeID": "361",
+                |                "triggerCondition": "TRIGGER_DEFAULT",
+                |                "type": "TAKE_PROFIT_ORDER",
+                |                "userID": 1666683
+                |            },
+                |            {
+                |                "accountID": "101-004-1666683-001",
+                |                "batchID": "363",
+                |                "id": "363",
+                |                "instrument": "EUR_USD",
+                |                "positionFill": "REDUCE_ONLY",
+                |                "reason": "TRADE_CLOSE",
+                |                "time": "2017-03-01T08:40:13.873310851Z",
+                |                "timeInForce": "FOK",
+                |                "tradeClose": {
+                |                    "tradeID": "361",
+                |                    "units": "ALL"
+                |                },
+                |                "type": "MARKET_ORDER",
+                |                "units": "-1500",
+                |                "userID": 1666683
+                |            },
+                |            {
+                |                "accountBalance": "100028.4317",
+                |                "accountID": "101-004-1666683-001",
+                |                "batchID": "363",
+                |                "financing": "0.0000",
+                |                "id": "364",
+                |                "instrument": "EUR_USD",
+                |                "orderID": "363",
+                |                "pl": "0.0150",
+                |                "price": "1.05364",
+                |                "reason": "MARKET_ORDER_TRADE_CLOSE",
+                |                "time": "2017-03-01T08:40:13.873310851Z",
+                |                "tradesClosed": [
+                |                    {
+                |                        "financing": "0.0000",
+                |                        "realizedPL": "0.0150",
+                |                        "tradeID": "361",
+                |                        "units": "-1500"
+                |                    }
+                |                ],
+                |                "type": "ORDER_FILL",
+                |                "units": "-1500",
+                |                "userID": 1666683
+                |            },
+                |            {
+                |                "accountID": "101-004-1666683-001",
+                |                "batchID": "363",
+                |                "closedTradeID": "361",
+                |                "id": "365",
+                |                "orderID": "362",
+                |                "reason": "LINKED_TRADE_CLOSED",
+                |                "time": "2017-03-01T08:40:13.873310851Z",
+                |                "tradeCloseTransactionID": "364",
+                |                "type": "ORDER_CANCEL",
+                |                "userID": 1666683
+                |            },
+                |            {
+                |                "accountID": "101-004-1666683-001",
+                |                "batchID": "366",
+                |                "id": "366",
+                |                "instrument": "EUR_USD",
+                |                "positionFill": "DEFAULT",
+                |                "price": "1.05570",
+                |                "reason": "CLIENT_ORDER",
+                |                "takeProfitOnFill": {
+                |                    "price": "1.09000",
+                |                    "timeInForce": "GTC"
+                |                },
+                |                "time": "2017-03-01T08:40:47.227998652Z",
+                |                "timeInForce": "GTC",
+                |                "triggerCondition": "TRIGGER_DEFAULT",
+                |                "type": "LIMIT_ORDER",
+                |                "units": "-1500",
+                |                "userID": 1666683
+                |            },
+                |            {
+                |                "accountID": "101-004-1666683-001",
+                |                "batchID": "367",
+                |                "id": "367",
+                |                "orderID": "366",
+                |                "reason": "CLIENT_REQUEST",
+                |                "time": "2017-03-01T08:41:06.870753569Z",
+                |                "type": "ORDER_CANCEL",
+                |                "userID": 1666683
+                |            },
+                |            {
+                |                "accountID": "101-004-1666683-001",
+                |                "batchID": "368",
+                |                "id": "368",
+                |                "instrument": "EUR_USD",
+                |                "positionFill": "DEFAULT",
+                |                "price": "1.05574999999999",
+                |                "reason": "CLIENT_ORDER",
+                |                "rejectReason": "PRICE_PRECISION_EXCEEDED",
+                |                "takeProfitOnFill": {
+                |                    "price": "1.09",
+                |                    "timeInForce": "GTC"
+                |                },
+                |                "time": "2017-03-01T08:41:32.172161900Z",
+                |                "timeInForce": "GTC",
+                |                "triggerCondition": "TRIGGER_DEFAULT",
+                |                "type": "LIMIT_ORDER_REJECT",
+                |                "units": "-1500",
+                |                "userID": 1666683
+                |            },
+                |            {
+                |                "accountID": "101-004-1666683-001",
+                |                "batchID": "369",
+                |                "id": "369",
+                |                "marginRate": "0.02",
+                |                "time": "2017-03-07T13:21:58.211174205Z",
+                |                "type": "CLIENT_CONFIGURE",
+                |                "userID": 1666683
+                |            },
+                |            {
+                |                "accountID": "101-004-1666683-001",
+                |                "batchID": "370",
+                |                "id": "370",
+                |                "instrument": "EUR_USD",
+                |                "positionFill": "DEFAULT",
+                |                "reason": "CLIENT_ORDER",
+                |                "takeProfitOnFill": {
+                |                    "price": "1.05569",
+                |                    "timeInForce": "GTC"
+                |                },
+                |                "time": "2017-03-07T13:29:56.714809695Z",
+                |                "timeInForce": "FOK",
+                |                "trailingStopLossOnFill": {
+                |                    "distance": "0.00159",
+                |                    "timeInForce": "GTC"
+                |                },
+                |                "type": "MARKET_ORDER",
+                |                "units": "-2500",
+                |                "userID": 1666683
+                |            },
+                |            {
+                |                "accountBalance": "100028.4317",
+                |                "accountID": "101-004-1666683-001",
+                |                "batchID": "370",
+                |                "financing": "0.0000",
+                |                "id": "371",
+                |                "instrument": "EUR_USD",
+                |                "orderID": "370",
+                |                "pl": "0.0000",
+                |                "price": "1.05735",
+                |                "reason": "MARKET_ORDER",
+                |                "time": "2017-03-07T13:29:56.714809695Z",
+                |                "tradeOpened": {
+                |                    "tradeID": "371",
+                |                    "units": "-2500"
+                |                },
+                |                "type": "ORDER_FILL",
+                |                "units": "-2500",
+                |                "userID": 1666683
+                |            },
+                |            {
+                |                "accountID": "101-004-1666683-001",
+                |                "batchID": "370",
+                |                "id": "372",
+                |                "price": "1.05569",
+                |                "reason": "ON_FILL",
+                |                "time": "2017-03-07T13:29:56.714809695Z",
+                |                "timeInForce": "GTC",
+                |                "tradeID": "371",
+                |                "triggerCondition": "TRIGGER_DEFAULT",
+                |                "type": "TAKE_PROFIT_ORDER",
+                |                "userID": 1666683
+                |            },
+                |            {
+                |                "accountID": "101-004-1666683-001",
+                |                "batchID": "370",
+                |                "distance": "0.00159",
+                |                "id": "373",
+                |                "reason": "ON_FILL",
+                |                "time": "2017-03-07T13:29:56.714809695Z",
+                |                "timeInForce": "GTC",
+                |                "tradeID": "371",
+                |                "triggerCondition": "TRIGGER_DEFAULT",
+                |                "type": "TRAILING_STOP_LOSS_ORDER",
+                |                "userID": 1666683
+                |            },
+                |            {
+                |                "accountID": "101-004-1666683-001",
+                |                "batchID": "374",
+                |                "id": "374",
+                |                "marginRate": "10000000000000",
+                |                "rejectReason": "MARGIN_RATE_WOULD_TRIGGER_CLOSEOUT",
+                |                "time": "2017-03-07T13:30:19.275368235Z",
+                |                "type": "CLIENT_CONFIGURE_REJECT",
+                |                "userID": 1666683
+                |            },
+                |            {
+                |                "accountID": "101-004-1666683-001",
+                |                "batchID": "375",
+                |                "id": "375",
+                |                "marginRate": "10000000000000",
+                |                "rejectReason": "MARGIN_RATE_WOULD_TRIGGER_CLOSEOUT",
+                |                "time": "2017-03-07T13:30:36.698714392Z",
+                |                "type": "CLIENT_CONFIGURE_REJECT",
+                |                "userID": 1666683
+                |            },
+                |            {
+                |                "accountBalance": "100027.4556",
+                |                "accountID": "101-004-1666683-001",
+                |                "batchID": "376",
+                |                "financing": "-0.0011",
+                |                "id": "376",
+                |                "instrument": "EUR_USD",
+                |                "orderID": "373",
+                |                "pl": "-0.9750",
+                |                "price": "1.05774",
+                |                "reason": "TRAILING_STOP_LOSS_ORDER",
+                |                "time": "2017-03-07T15:53:59.947555381Z",
+                |                "tradesClosed": [
+                |                    {
+                |                        "financing": "-0.0011",
+                |                        "realizedPL": "-0.9750",
+                |                        "tradeID": "371",
+                |                        "units": "2500"
+                |                    }
+                |                ],
+                |                "type": "ORDER_FILL",
+                |                "units": "2500",
+                |                "userID": 0
+                |            },
+                |            {
+                |                "accountID": "101-004-1666683-001",
+                |                "batchID": "376",
+                |                "closedTradeID": "371",
+                |                "id": "377",
+                |                "orderID": "372",
+                |                "reason": "LINKED_TRADE_CLOSED",
+                |                "time": "2017-03-07T15:53:59.947555381Z",
+                |                "tradeCloseTransactionID": "376",
+                |                "type": "ORDER_CANCEL",
+                |                "userID": 0
+                |            }
+                |        ]
+                |    },
+                |    "lastTransactionID": "377",
+                |    "state": {
+                |        "NAV": "100027.4556",
+                |        "marginAvailable": "100027.4556",
+                |        "marginCallMarginUsed": "0.0000",
+                |        "marginCallPercent": "0.00000",
+                |        "marginCloseoutMarginUsed": "0.0000",
+                |        "marginCloseoutNAV": "100027.4556",
+                |        "marginCloseoutPercent": "0.00000",
+                |        "marginCloseoutUnrealizedPL": "0.0000",
+                |        "marginUsed": "0.0000",
+                |        "orders": [],
+                |        "positionValue": "0.0000",
+                |        "positions": [],
+                |        "trades": [],
+                |        "unrealizedPL": "0.0000",
+                |        "withdrawalLimit": "100027.4556"
+                |    }
+                |}
+              """.stripMargin
+            )
+          )
+        )
+      )
+
+    val accountChangesF = client.getAccountChanges("12345-6789", 360)
+
+    val accountChanges = Await.result(accountChangesF, 2.second)
+
+    assert(
+      accountChanges == Right(
+        AccountChangesResponse(
+          AccountChanges(
+            Vector(),
+            Vector(
+              TakeProfitOrder(
+                362,
+                Instant.parse("2017-03-01T08:39:58.958592992Z"),
+                CANCELLED,
+                None,
+                TAKE_PROFIT,
+                361,
+                None,
+                1.09,
+                GTC,
+                None,
+                None,
+                None,
+                None,
+                None,
+                None,
+                Some(365),
+                Some(Instant.parse("2017-03-01T08:40:13.873310851Z")),
+                None,
+                None
+              ),
+              LimitOrder(
+                366,
+                Instant.parse("2017-03-01T08:40:47.227998652Z"),
+                CANCELLED,
+                None,
+                LIMIT,
+                "EUR_USD",
+                -1500.0,
+                1.0557,
+                GTC,
+                None,
+                Some(POSITION_DEFAULT),
+                Some(TakeProfitDetails(1.09, GTC, None, None)),
+                None,
+                None,
+                None,
+                None,
+                None,
+                None,
+                None,
+                None,
+                Some(367),
+                Some(Instant.parse("2017-03-01T08:41:06.870753569Z")),
+                None,
+                None
+              ),
+              TakeProfitOrder(
+                372,
+                Instant.parse("2017-03-07T13:29:56.714809695Z"),
+                CANCELLED,
+                None,
+                TAKE_PROFIT,
+                371,
+                None,
+                1.05569,
+                GTC,
+                None,
+                None,
+                None,
+                None,
+                None,
+                None,
+                Some(377),
+                Some(Instant.parse("2017-03-07T15:53:59.947555381Z")),
+                None,
+                None
+              )
+            ),
+            Vector(
+              LimitOrder(
+                360,
+                Instant.parse("2017-03-01T08:39:58.958592992Z"),
+                FILLED,
+                None,
+                LIMIT,
+                "EUR_USD",
+                1500.0,
+                1.0557,
+                GTC,
+                None,
+                Some(POSITION_DEFAULT),
+                Some(TakeProfitDetails(1.09, GTC, None, None)),
+                None,
+                None,
+                None,
+                Some(361),
+                Some(Instant.parse("2017-03-01T08:39:58.958592992Z")),
+                Some(361),
+                None,
+                None,
+                None,
+                None,
+                None,
+                None
+              ),
+              MarketOrder(
+                363,
+                Instant.parse("2017-03-01T08:40:13.873310851Z"),
+                FILLED,
+                None,
+                MARKET,
+                "EUR_USD",
+                -1500.0,
+                FOK,
+                None,
+                Some(POSITION_REDUCE_ONLY),
+                None,
+                None,
+                None,
+                None,
+                None,
+                None,
+                None,
+                None,
+                None,
+                Some(364),
+                Some(Instant.parse("2017-03-01T08:40:13.873310851Z")),
+                None,
+                None,
+                Some(Vector(361)),
+                None,
+                None
+              ),
+              MarketOrder(
+                370,
+                Instant.parse("2017-03-07T13:29:56.714809695Z"),
+                FILLED,
+                None,
+                MARKET,
+                "EUR_USD",
+                -2500.0,
+                FOK,
+                None,
+                Some(POSITION_DEFAULT),
+                None,
+                None,
+                None,
+                None,
+                None,
+                Some(TakeProfitDetails(1.05569, GTC, None, None)),
+                None,
+                Some(TrailingStopLossDetails(0.00159, GTC, None, None)),
+                None,
+                Some(371),
+                Some(Instant.parse("2017-03-07T13:29:56.714809695Z")),
+                Some(371),
+                None,
+                None,
+                None,
+                None
+              ),
+              TrailingStopLossOrder(
+                373,
+                Instant.parse("2017-03-07T13:29:56.714809695Z"),
+                FILLED,
+                None,
+                TRAILING_STOP_LOSS,
+                371,
+                None,
+                0.00159,
+                GTC,
+                None,
+                1.05773,
+                Some(376),
+                Some(Instant.parse("2017-03-07T15:53:59.947555381Z")),
+                None,
+                None,
+                Some(Vector(371)),
+                None,
+                None,
+                None,
+                None
+              )
+            ),
+            Vector(),
+            Vector(),
+            Vector(),
+            Vector(
+              TradeSummary(
+                361,
+                "EUR_USD",
+                1.05363,
+                Instant.parse("2017-03-01T08:39:58.958592992Z"),
+                CLOSED,
+                1.5E+3,
+                0,
+                0.015,
+                None,
+                Some(Vector(364)),
+                0.0,
+                Some(Instant.parse("2017-03-01T08:40:13.873310851Z")),
+                None,
+                Some(362),
+                None,
+                None
+              ),
+              TradeSummary(
+                371,
+                "EUR_USD",
+                1.05735,
+                Instant.parse("2017-03-07T13:29:56.714809695Z"),
+                CLOSED,
+                -2.5E+3,
+                0,
+                -0.975,
+                None,
+                Some(Vector(376)),
+                -0.0011,
+                Some(Instant.parse("2017-03-07T15:53:59.947555381Z")),
+                None,
+                Some(372),
+                None,
+                Some(373)
+              )
+            ),
+            Vector(
+              Position(
+                "EUR_USD",
+                11.9982,
+                None,
+                11.9982,
+                PositionSide(0.0, None, None, 15.3482, None, 15.3482),
+                PositionSide(0.0, None, None, -3.35, None, -3.35)
+              )
+            ),
+            Vector(
+              OrderFillTransaction(
+                361,
+                Instant.parse("2017-03-01T08:39:58.958592992Z"),
+                1666683,
+                "101-004-1666683-001",
+                360,
+                ORDER_FILL,
+                360,
+                None,
+                "EUR_USD",
+                1500.0,
+                1.05363,
+                Some(LIMIT_ORDER),
+                0.0,
+                0.0,
+                100028.4167,
+                Some(TradeOpen(361, 1500.0, None)),
+                None,
+                None
+              ),
+              TakeProfitOrderTransaction(
+                362,
+                Instant.parse("2017-03-01T08:39:58.958592992Z"),
+                1666683,
+                "101-004-1666683-001",
+                360,
+                TAKE_PROFIT_ORDER,
+                361,
+                None,
+                1.09,
+                GTC,
+                None,
+                Some(ON_FILL),
+                None,
+                None,
+                None,
+                None
+              ),
+              MarketOrderTransaction(
+                363,
+                Instant.parse("2017-03-01T08:40:13.873310851Z"),
+                1666683,
+                "101-004-1666683-001",
+                363,
+                MARKET_ORDER,
+                "EUR_USD",
+                -1500.0,
+                FOK,
+                None,
+                REDUCE_ONLY,
+                Some(MarketOrderTradeClose(361, None, "ALL")),
+                None,
+                None,
+                None,
+                None,
+                Some(TRADE_CLOSE),
+                None,
+                None,
+                None,
+                None,
+                None
+              ),
+              OrderFillTransaction(
+                364,
+                Instant.parse("2017-03-01T08:40:13.873310851Z"),
+                1666683,
+                "101-004-1666683-001",
+                363,
+                ORDER_FILL,
+                363,
+                None,
+                "EUR_USD",
+                -1500.0,
+                1.05364,
+                Some(MARKET_ORDER_TRADE_CLOSE),
+                0.015,
+                0.0,
+                100028.4317,
+                None,
+                Some(Vector(TradeReduce(361, -1500.0, None, Some(0.015), Some(0.0)))),
+                None
+              ),
+              OrderCancelTransaction(
+                365,
+                Instant.parse("2017-03-01T08:40:13.873310851Z"),
+                1666683,
+                "101-004-1666683-001",
+                363,
+                ORDER_CANCEL,
+                362,
+                None,
+                Some(LINKED_TRADE_CLOSED),
+                None
+              ),
+              LimitOrderTransaction(
+                366,
+                Instant.parse("2017-03-01T08:40:47.227998652Z"),
+                1666683,
+                "101-004-1666683-001",
+                366,
+                TransactionType.LIMIT_ORDER,
+                "EUR_USD",
+                -1500.0,
+                1.0557,
+                GTC,
+                None,
+                DEFAULT,
+                Some(CLIENT_ORDER),
+                None,
+                Some(TakeProfitDetails(1.09, GTC, None, None)),
+                None,
+                None,
+                None,
+                None,
+                None),
+              OrderCancelTransaction(
+                367,
+                Instant.parse("2017-03-01T08:41:06.870753569Z"),
+                1666683,
+                "101-004-1666683-001",
+                367,
+                ORDER_CANCEL,
+                366,
+                None,
+                Some(CLIENT_REQUEST),
+                None
+              ),
+              LimitOrderRejectTransaction(
+                368,
+                Instant.parse("2017-03-01T08:41:32.172161900Z"),
+                1666683,
+                "101-004-1666683-001",
+                368,
+                LIMIT_ORDER_REJECT,
+                "EUR_USD",
+                -1500.0,
+                1.05574999999999,
+                GTC,
+                None,
+                DEFAULT,
+                Some(CLIENT_ORDER),
+                None,
+                Some(TakeProfitDetails(1.09, GTC, None, None)),
+                None,
+                None,
+                None,
+                None,
+                Some(PRICE_PRECISION_EXCEEDED)
+              ),
+              ClientConfigureTransaction(
+                369,
+                Instant.parse("2017-03-07T13:21:58.211174205Z"),
+                1666683,
+                "101-004-1666683-001",
+                369,
+                CLIENT_CONFIGURE,
+                None,
+                0.02
+              ),
+              MarketOrderTransaction(
+                370,
+                Instant.parse("2017-03-07T13:29:56.714809695Z"),
+                1666683,
+                "101-004-1666683-001",
+                370,
+                MARKET_ORDER,
+                "EUR_USD",
+                -2500.0,
+                FOK,
+                None,
+                DEFAULT,
+                None,
+                None,
+                None,
+                None,
+                None,
+                Some(MarketOrderReason.CLIENT_ORDER),
+                None,
+                Some(TakeProfitDetails(1.05569, GTC, None, None)),
+                None,
+                Some(TrailingStopLossDetails(0.00159, GTC, None, None)),
+                None
+              ),
+              OrderFillTransaction(
+                371,
+                Instant.parse("2017-03-07T13:29:56.714809695Z"),
+                1666683,
+                "101-004-1666683-001",
+                370,
+                ORDER_FILL,
+                370,
+                None,
+                "EUR_USD",
+                -2500.0,
+                1.05735,
+                Some(OrderFillReason.MARKET_ORDER),
+                0.0,
+                0.0,
+                100028.4317,
+                Some(TradeOpen(371, -2500.0, None)),
+                None,
+                None
+              ),
+              TakeProfitOrderTransaction(
+                372,
+                Instant.parse("2017-03-07T13:29:56.714809695Z"),
+                1666683,
+                "101-004-1666683-001",
+                370,
+                TAKE_PROFIT_ORDER,
+                371,
+                None,
+                1.05569,
+                GTC,
+                None,
+                Some(ON_FILL),
+                None,
+                None,
+                None,
+                None
+              ),
+              TrailingStopLossOrderTransaction(
+                373,
+                Instant.parse("2017-03-07T13:29:56.714809695Z"),
+                1666683,
+                "101-004-1666683-001",
+                370,
+                TRAILING_STOP_LOSS_ORDER,
+                371,
+                None,
+                0.00159,
+                GTC,
+                None,
+                Some(TrailingStopLossOrderReason.ON_FILL),
+                None,
+                None,
+                None,
+                None
+              ),
+              ClientConfigureRejectTransaction(
+                374,
+                Instant.parse("2017-03-07T13:30:19.275368235Z"),
+                1666683,
+                "101-004-1666683-001",
+                374,
+                CLIENT_CONFIGURE_REJECT,
+                None,
+                1.0E13,
+                Some(MARGIN_RATE_WOULD_TRIGGER_CLOSEOUT)
+              ),
+              ClientConfigureRejectTransaction(
+                375,
+                Instant.parse("2017-03-07T13:30:36.698714392Z"),
+                1666683,
+                "101-004-1666683-001",
+                375,
+                CLIENT_CONFIGURE_REJECT,
+                None,
+                1.0E13,
+                Some(MARGIN_RATE_WOULD_TRIGGER_CLOSEOUT)
+              ),
+              OrderFillTransaction(
+                376,
+                Instant.parse("2017-03-07T15:53:59.947555381Z"),
+                0,
+                "101-004-1666683-001",
+                376,
+                ORDER_FILL,
+                373,
+                None,
+                "EUR_USD",
+                2500.0,
+                1.05774,
+                Some(OrderFillReason.TRAILING_STOP_LOSS_ORDER),
+                -0.975,
+                -0.0011,
+                100027.4556,
+                None,
+                Some(Vector(TradeReduce(371, 2500.0, None, Some(-0.975), Some(-0.0011)))),
+                None
+              ),
+              OrderCancelTransaction(
+                377,
+                Instant.parse("2017-03-07T15:53:59.947555381Z"),
+                0,
+                "101-004-1666683-001",
+                376,
+                ORDER_CANCEL,
+                372,
+                None,
+                Some(LINKED_TRADE_CLOSED),
+                None
+              )
+            )
+          ),
+          AccountState(
+            0.0,
+            100027.4556,
+            0.0,
+            100027.4556,
+            0.0,
+            0.0,
+            100027.4556,
+            0.0,
+            0.0,
+            100027.4556,
+            0.0,
+            0.0,
+            Vector(),
+            Vector(),
+            Vector()
+          ),
+          377
         )
       )
     )
