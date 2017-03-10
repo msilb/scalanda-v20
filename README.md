@@ -7,7 +7,7 @@
 
 # scalanda-v20
 
-scalanda-v20 is a light-weight Scala/Akka/Spray-based wrapper for Oanda's REST and Stream API v20, which supports completely asynchronous non-blocking communication with the API. If you are using (or planning to use) Oanda as a broker for your automated trading needs, this library might be of interest.
+scalanda-v20 is a light-weight Scala/Akka HTTP based client for Oanda's REST and Stream API v20, which supports completely asynchronous non-blocking communication with the API. If you are using (or planning to use) Oanda as a broker for your automated trading needs, this library might be of interest.
 
 # Install
 
