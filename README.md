@@ -75,4 +75,4 @@ For more detailed information on request / response parameters see Oanda API spe
 
 # License
 
-[MIT License](https://github.com/msilb/scalanda-v20/blob/master/LICENSE)
+[MIT License](LICENSE)
