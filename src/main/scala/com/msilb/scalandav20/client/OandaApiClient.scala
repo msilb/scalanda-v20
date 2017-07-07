@@ -46,15 +46,8 @@ class OandaApiClient(env: Environment, authToken: String) extends HttpRequestSer
 
   private def sendReceive[T <: Response : Decoder](req: HttpRequest): Future[GenericResponse[T]] = {
     execute(req).flatMap {
-      case r if Set[StatusCode](
-        BadRequest,
-        Unauthorized,
-        Forbidden,
-        NotFound,
-        MethodNotAllowed,
-        RequestedRangeNotSatisfiable
-      ).contains(r.status) => Unmarshal(r.entity).to[ErrorResponse].map(Left(_))
-      case r => Unmarshal(r.entity).to[T].map(Right(_))
+      case r if r.status.isSuccess() => Unmarshal(r.entity).to[T].map(Right(_))
+      case r => Unmarshal(r.entity).to[ErrorResponse].map(Left(_))
     }
   }
 
