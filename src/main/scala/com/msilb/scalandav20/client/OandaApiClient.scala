@@ -25,7 +25,6 @@ import com.msilb.scalandav20.model.primitives.InstrumentName
 import com.msilb.scalandav20.model.trades.{TradeID, TradeSpecifier, TradeState}
 import com.msilb.scalandav20.model.transactions._
 import io.circe.Decoder
-import io.circe.java8.time._
 import io.circe.parser._
 
 import scala.concurrent.{ExecutionContext, Future}
