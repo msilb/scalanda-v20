@@ -124,8 +124,8 @@ class OandaApiClient(env: Environment, authToken: String) extends HttpRequestSer
     val queryMap = Map() ++ optionalQueryParam(price, "price") ++ optionalQueryParam(granularity, "granularity") ++
       optionalQueryParam(count, "count") ++ optionalQueryParam(smooth, "smooth") ++
       optionalQueryParam(includeFirst, "includeFirst") ++ optionalQueryParam(dailyAlignment, "dailyAlignment") ++
-      optionalQueryParam(alignmentTimezone, "alignmentTimezone") ++ optionalQueryParam(weeklyAlignment, "weeklyAlignment")
-    optionalQueryParam(from, "from") ++ optionalQueryParam(to, "to")
+      optionalQueryParam(alignmentTimezone, "alignmentTimezone") ++ optionalQueryParam(weeklyAlignment, "weeklyAlignment") ++
+      optionalQueryParam(from, "from") ++ optionalQueryParam(to, "to")
     val req = baseRequest
       .withUri(
         baseRestUri
