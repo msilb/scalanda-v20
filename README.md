@@ -14,7 +14,7 @@ scalanda-v20 is a light-weight Scala/Akka HTTP based client for Oanda's REST and
 `scalanda-v20` is compiled for Scala 2.12. If you are using `sbt` just drop this dependency into your `build.sbt` and you should be good to go.
 
 ```scala
-libraryDependencies += "com.msilb" %% "scalanda-v20" % "0.1.1"
+libraryDependencies += "com.msilb" %% "scalanda-v20" % "0.1.2"
 ```
 
 # Usage
