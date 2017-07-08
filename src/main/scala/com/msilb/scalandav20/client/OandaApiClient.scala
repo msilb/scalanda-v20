@@ -6,7 +6,6 @@ import akka.actor.ActorSystem
 import akka.http.scaladsl.Http
 import akka.http.scaladsl.marshalling.Marshal
 import akka.http.scaladsl.model.HttpMethods._
-import akka.http.scaladsl.model.StatusCodes._
 import akka.http.scaladsl.model.Uri.Path._
 import akka.http.scaladsl.model.Uri.Query
 import akka.http.scaladsl.model._
