@@ -30,6 +30,6 @@ trait AkkaHttpCirceSupport {
     jsonStringUnmarshaller.map(jawn.decode(_).fold(throw _, identity))
 
   implicit def circeToEntityMarshaller[A](implicit encoder: Encoder[A],
-                                          printer: Json => String = Printer.noSpaces.copy(dropNullKeys = true).pretty): ToEntityMarshaller[A] =
+                                          printer: Json => String = Printer.noSpaces.copy(dropNullValues = true).pretty): ToEntityMarshaller[A] =
     jsonStringMarshaller.compose(printer).compose(encoder.apply)
 }
