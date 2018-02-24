@@ -1,5 +1,3 @@
-sonatypeProfileName := "msilb"
-
 publishMavenStyle := true
 
 licenses := Seq("MIT" -> url("http://opensource.org/licenses/MIT"))
