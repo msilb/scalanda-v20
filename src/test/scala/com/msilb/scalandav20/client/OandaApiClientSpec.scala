@@ -52,6 +52,8 @@ class OandaApiClientSpec extends FlatSpec with Matchers with MockFactory {
 
   val client = new OandaApiClient(Practice, "auth_token") with MockHttpRequestService
 
+  val timeout: FiniteDuration = 5.seconds
+
   "OandaApiClient" should "return a list of accounts" in {
 
     client
@@ -77,9 +79,7 @@ class OandaApiClientSpec extends FlatSpec with Matchers with MockFactory {
         )
       )
 
-    val accountsListF = client.getAccountsList
-
-    val accounts = Await.result(accountsListF, 1.second)
+    val accounts = Await.result(client.getAccountsList, timeout)
 
     assert(
       accounts == Right(
@@ -381,9 +381,7 @@ class OandaApiClientSpec extends FlatSpec with Matchers with MockFactory {
         )
       )
 
-    val accountDetailsF = client.getAccountDetails("12345-6789")
-
-    val accountDetails = Await.result(accountDetailsF, 1.second)
+    val accountDetails = Await.result(client.getAccountDetails("12345-6789"), timeout)
 
     assert(
       accountDetails == Right(
@@ -762,9 +760,7 @@ class OandaApiClientSpec extends FlatSpec with Matchers with MockFactory {
         )
       )
 
-    val accountSummaryF = client.getAccountSummary("12345-6789")
-
-    val accountSummary = Await.result(accountSummaryF, 1.second)
+    val accountSummary = Await.result(client.getAccountSummary("12345-6789"), timeout)
 
     assert(
       accountSummary == Right(
@@ -851,9 +847,7 @@ class OandaApiClientSpec extends FlatSpec with Matchers with MockFactory {
         )
       )
 
-    val accountInstrumentsF = client.getAccountInstruments("12345-6789", Some(Seq("EUR_USD")))
-
-    val accountInstruments = Await.result(accountInstrumentsF, 1.second)
+    val accountInstruments = Await.result(client.getAccountInstruments("12345-6789", Some(Seq("EUR_USD"))), timeout)
 
     assert(
       accountInstruments == Right(
@@ -918,12 +912,13 @@ class OandaApiClientSpec extends FlatSpec with Matchers with MockFactory {
         )
       )
 
-    val configureAccountF = client.changeAccountConfig(
-      "12345-6789",
-      AccountConfigChangeRequest(marginRate = Some("0.02"), alias = Some("new_acct_alias"))
+    val configureAccount = Await.result(
+      client.changeAccountConfig(
+        "12345-6789",
+        AccountConfigChangeRequest(marginRate = Some("0.02"), alias = Some("new_acct_alias"))
+      ),
+      timeout
     )
-
-    val configureAccount = Await.result(configureAccountF, 1.second)
 
     assert(
       configureAccount == Right(
@@ -985,12 +980,13 @@ class OandaApiClientSpec extends FlatSpec with Matchers with MockFactory {
         )
       )
 
-    val configureAccountF = client.changeAccountConfig(
-      "12345-6789",
-      AccountConfigChangeRequest(marginRate = Some("10000000000000"))
+    val configureAccount = Await.result(
+      client.changeAccountConfig(
+        "12345-6789",
+        AccountConfigChangeRequest(marginRate = Some("10000000000000"))
+      ),
+      timeout
     )
-
-    val configureAccount = Await.result(configureAccountF, 1.second)
 
     assert(
       configureAccount == Right(
@@ -1509,9 +1505,7 @@ class OandaApiClientSpec extends FlatSpec with Matchers with MockFactory {
         )
       )
 
-    val accountChangesF = client.getAccountChanges("12345-6789", 360)
-
-    val accountChanges = Await.result(accountChangesF, 2.second)
+    val accountChanges = Await.result(client.getAccountChanges("12345-6789", 360), timeout)
 
     assert(
       accountChanges == Right(
