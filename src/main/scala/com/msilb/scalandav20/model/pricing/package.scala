@@ -5,9 +5,9 @@ import java.time.Instant
 import com.msilb.scalandav20.model.primitives.{DecimalNumber, InstrumentName}
 import io.circe.generic.JsonCodec
 import io.circe.generic.extras.semiauto.{deriveEnumerationDecoder, deriveEnumerationEncoder}
+import io.circe.syntax._
 import io.circe.{Decoder, Encoder}
 import io.circe.java8.time._
-import io.circe.syntax._
 
 package object pricing {
 

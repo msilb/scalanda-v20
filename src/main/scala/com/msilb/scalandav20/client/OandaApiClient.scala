@@ -31,8 +31,8 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class OandaApiClient(env: Environment, authToken: String) extends HttpRequestService {
 
-  implicit val system = ActorSystem()
-  implicit val materializer = ActorMaterializer()
+  implicit val system: ActorSystem = ActorSystem()
+  implicit val materializer: ActorMaterializer = ActorMaterializer()
   override implicit val ec: ExecutionContext = system.dispatcher
 
   private[client] lazy val baseRestUri = Uri(s"https://${env.restApiUrl()}")

@@ -11,8 +11,8 @@ import com.msilb.scalandav20.model.primitives.{Instrument, InstrumentName}
 import com.msilb.scalandav20.model.trades.Trade
 import com.msilb.scalandav20.model.transactions.Transaction._
 import com.msilb.scalandav20.model.transactions.{Transaction, TransactionFilter, TransactionID}
-import io.circe.generic.JsonCodec
 import io.circe.Decoder
+import io.circe.generic.JsonCodec
 import io.circe.java8.time._
 
 sealed trait Response

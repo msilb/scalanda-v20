@@ -1,4 +1,6 @@
-credentials ++= (for {
-  username <- Option(System.getenv().get("SONATYPE_USERNAME"))
-  password <- Option(System.getenv().get("SONATYPE_PASSWORD"))
-} yield Credentials("Sonatype Nexus Repository Manager", "oss.sonatype.org", username, password)).toSeq
+publishMavenStyle := true
+
+licenses := Seq("MIT" -> url("http://opensource.org/licenses/MIT"))
+
+import xerial.sbt.Sonatype._
+sonatypeProjectHosting := Some(GitHubHosting("msilb", "scalanda-v20", "me@msilb.com"))

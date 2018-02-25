@@ -1,7 +1,7 @@
 organization := "com.msilb"
 name := "scalanda-v20"
 
-scalaVersion := "2.12.2"
+scalaVersion := "2.12.4"
 
 scalacOptions := Seq(
   "-target:jvm-1.8",
@@ -21,10 +21,10 @@ scalacOptions := Seq(
 )
 
 libraryDependencies ++= {
-  val circeV = "0.8.0"
-  val akkaHttpV = "10.0.9"
-  val scalaTestV = "3.0.1"
-  val scalaMockV = "3.5.0"
+  val circeV = "0.9.1"
+  val akkaHttpV = "10.0.11"
+  val scalaTestV = "3.0.4"
+  val scalaMockV = "4.1.0"
   Seq(
     "com.typesafe.akka" %% "akka-http" % akkaHttpV,
     "io.circe" %% "circe-core" % circeV,
@@ -33,9 +33,12 @@ libraryDependencies ++= {
     "io.circe" %% "circe-java8" % circeV,
     "io.circe" %% "circe-generic-extras" % circeV,
     "org.scalatest" %% "scalatest" % scalaTestV % Test,
-    "org.scalamock" %% "scalamock-scalatest-support" % scalaMockV % Test
+    "org.scalamock" %% "scalamock" % scalaMockV % Test
   )
 }
+
+// Add the default sonatype repository setting
+publishTo := sonatypePublishTo.value
 
 resolvers += Resolver.sonatypeRepo("releases")
 addCompilerPlugin("org.scalamacros" % "paradise" % "2.1.0" cross CrossVersion.full)
