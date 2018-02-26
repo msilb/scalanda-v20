@@ -1336,7 +1336,7 @@ class OandaApiClientSpec extends FlatSpec with Matchers with MockFactory {
                 |                "reason": "CLIENT_ORDER",
                 |                "rejectReason": "PRICE_PRECISION_EXCEEDED",
                 |                "takeProfitOnFill": {
-                |                    "price": "1.09",
+                |                    "price": "1.09000",
                 |                    "timeInForce": "GTC"
                 |                },
                 |                "time": "2017-03-01T08:41:32.172161900Z",
@@ -1511,8 +1511,8 @@ class OandaApiClientSpec extends FlatSpec with Matchers with MockFactory {
       accountChanges == Right(
         AccountChangesResponse(
           AccountChanges(
-            Vector(),
-            Vector(
+            List(),
+            List(
               TakeProfitOrder(
                 362,
                 Instant.parse("2017-03-01T08:39:58.958592992Z"),
@@ -1521,7 +1521,7 @@ class OandaApiClientSpec extends FlatSpec with Matchers with MockFactory {
                 TAKE_PROFIT,
                 361,
                 None,
-                1.09,
+                "1.09000",
                 GTC,
                 None,
                 None,
@@ -1542,11 +1542,11 @@ class OandaApiClientSpec extends FlatSpec with Matchers with MockFactory {
                 LIMIT,
                 "EUR_USD",
                 -1500.0,
-                1.0557,
+                "1.05570",
                 GTC,
                 None,
                 Some(POSITION_DEFAULT),
-                Some(TakeProfitDetails(1.09, GTC, None, None)),
+                Some(TakeProfitDetails("1.09000", GTC, None, None)),
                 None,
                 None,
                 None,
@@ -1568,7 +1568,7 @@ class OandaApiClientSpec extends FlatSpec with Matchers with MockFactory {
                 TAKE_PROFIT,
                 371,
                 None,
-                1.05569,
+                "1.05569",
                 GTC,
                 None,
                 None,
@@ -1582,7 +1582,7 @@ class OandaApiClientSpec extends FlatSpec with Matchers with MockFactory {
                 None
               )
             ),
-            Vector(
+            List(
               LimitOrder(
                 360,
                 Instant.parse("2017-03-01T08:39:58.958592992Z"),
@@ -1591,11 +1591,11 @@ class OandaApiClientSpec extends FlatSpec with Matchers with MockFactory {
                 LIMIT,
                 "EUR_USD",
                 1500.0,
-                1.0557,
+                "1.05570",
                 GTC,
                 None,
                 Some(POSITION_DEFAULT),
-                Some(TakeProfitDetails(1.09, GTC, None, None)),
+                Some(TakeProfitDetails("1.09000", GTC, None, None)),
                 None,
                 None,
                 None,
@@ -1633,7 +1633,7 @@ class OandaApiClientSpec extends FlatSpec with Matchers with MockFactory {
                 Some(Instant.parse("2017-03-01T08:40:13.873310851Z")),
                 None,
                 None,
-                Some(Vector(361)),
+                Some(List(361)),
                 None,
                 None
               ),
@@ -1653,9 +1653,9 @@ class OandaApiClientSpec extends FlatSpec with Matchers with MockFactory {
                 None,
                 None,
                 None,
-                Some(TakeProfitDetails(1.05569, GTC, None, None)),
+                Some(TakeProfitDetails("1.05569", GTC, None, None)),
                 None,
-                Some(TrailingStopLossDetails(0.00159, GTC, None, None)),
+                Some(TrailingStopLossDetails("0.00159", GTC, None, None)),
                 None,
                 Some(371),
                 Some(Instant.parse("2017-03-07T13:29:56.714809695Z")),
@@ -1673,36 +1673,36 @@ class OandaApiClientSpec extends FlatSpec with Matchers with MockFactory {
                 TRAILING_STOP_LOSS,
                 371,
                 None,
-                0.00159,
+                "0.00159",
                 GTC,
                 None,
-                1.05773,
+                "1.05773",
                 Some(376),
                 Some(Instant.parse("2017-03-07T15:53:59.947555381Z")),
                 None,
                 None,
-                Some(Vector(371)),
+                Some(List(371)),
                 None,
                 None,
                 None,
                 None
               )
             ),
-            Vector(),
-            Vector(),
-            Vector(),
-            Vector(
+            List(),
+            List(),
+            List(),
+            List(
               TradeSummary(
                 361,
                 "EUR_USD",
-                1.05363,
+                "1.05363",
                 Instant.parse("2017-03-01T08:39:58.958592992Z"),
                 CLOSED,
-                1.5E+3,
+                1500.0,
                 0,
                 0.015,
                 None,
-                Some(Vector(364)),
+                Some(List(364)),
                 0.0,
                 Some(Instant.parse("2017-03-01T08:40:13.873310851Z")),
                 None,
@@ -1713,14 +1713,14 @@ class OandaApiClientSpec extends FlatSpec with Matchers with MockFactory {
               TradeSummary(
                 371,
                 "EUR_USD",
-                1.05735,
+                "1.05735",
                 Instant.parse("2017-03-07T13:29:56.714809695Z"),
                 CLOSED,
-                -2.5E+3,
+                -2500.0,
                 0,
                 -0.975,
                 None,
-                Some(Vector(376)),
+                Some(List(376)),
                 -0.0011,
                 Some(Instant.parse("2017-03-07T15:53:59.947555381Z")),
                 None,
@@ -1729,7 +1729,7 @@ class OandaApiClientSpec extends FlatSpec with Matchers with MockFactory {
                 Some(373)
               )
             ),
-            Vector(
+            List(
               Position(
                 "EUR_USD",
                 11.9982,
@@ -1739,7 +1739,7 @@ class OandaApiClientSpec extends FlatSpec with Matchers with MockFactory {
                 PositionSide(0.0, None, None, -3.35, None, -3.35)
               )
             ),
-            Vector(
+            List(
               OrderFillTransaction(
                 361,
                 Instant.parse("2017-03-01T08:39:58.958592992Z"),
@@ -1751,7 +1751,7 @@ class OandaApiClientSpec extends FlatSpec with Matchers with MockFactory {
                 None,
                 "EUR_USD",
                 1500.0,
-                1.05363,
+                "1.05363",
                 Some(LIMIT_ORDER),
                 0.0,
                 0.0,
@@ -1769,7 +1769,7 @@ class OandaApiClientSpec extends FlatSpec with Matchers with MockFactory {
                 TAKE_PROFIT_ORDER,
                 361,
                 None,
-                1.09,
+                "1.09000",
                 GTC,
                 None,
                 Some(ON_FILL),
@@ -1813,13 +1813,13 @@ class OandaApiClientSpec extends FlatSpec with Matchers with MockFactory {
                 None,
                 "EUR_USD",
                 -1500.0,
-                1.05364,
+                "1.05364",
                 Some(MARKET_ORDER_TRADE_CLOSE),
                 0.015,
                 0.0,
                 100028.4317,
                 None,
-                Some(Vector(TradeReduce(361, -1500.0, None, Some(0.015), Some(0.0)))),
+                Some(List(TradeReduce(361, -1500.0, None, Some(0.015), Some(0.0)))),
                 None
               ),
               OrderCancelTransaction(
@@ -1843,13 +1843,13 @@ class OandaApiClientSpec extends FlatSpec with Matchers with MockFactory {
                 TransactionType.LIMIT_ORDER,
                 "EUR_USD",
                 -1500.0,
-                1.0557,
+                "1.05570",
                 GTC,
                 None,
                 DEFAULT,
                 Some(CLIENT_ORDER),
                 None,
-                Some(TakeProfitDetails(1.09, GTC, None, None)),
+                Some(TakeProfitDetails("1.09000", GTC, None, None)),
                 None,
                 None,
                 None,
@@ -1876,13 +1876,13 @@ class OandaApiClientSpec extends FlatSpec with Matchers with MockFactory {
                 LIMIT_ORDER_REJECT,
                 "EUR_USD",
                 -1500.0,
-                1.05574999999999,
+                "1.05574999999999",
                 GTC,
                 None,
                 DEFAULT,
                 Some(CLIENT_ORDER),
                 None,
-                Some(TakeProfitDetails(1.09, GTC, None, None)),
+                Some(TakeProfitDetails("1.09000", GTC, None, None)),
                 None,
                 None,
                 None,
@@ -1918,9 +1918,9 @@ class OandaApiClientSpec extends FlatSpec with Matchers with MockFactory {
                 None,
                 Some(MarketOrderReason.CLIENT_ORDER),
                 None,
-                Some(TakeProfitDetails(1.05569, GTC, None, None)),
+                Some(TakeProfitDetails("1.05569", GTC, None, None)),
                 None,
-                Some(TrailingStopLossDetails(0.00159, GTC, None, None)),
+                Some(TrailingStopLossDetails("0.00159", GTC, None, None)),
                 None
               ),
               OrderFillTransaction(
@@ -1934,7 +1934,7 @@ class OandaApiClientSpec extends FlatSpec with Matchers with MockFactory {
                 None,
                 "EUR_USD",
                 -2500.0,
-                1.05735,
+                "1.05735",
                 Some(OrderFillReason.MARKET_ORDER),
                 0.0,
                 0.0,
@@ -1952,7 +1952,7 @@ class OandaApiClientSpec extends FlatSpec with Matchers with MockFactory {
                 TAKE_PROFIT_ORDER,
                 371,
                 None,
-                1.05569,
+                "1.05569",
                 GTC,
                 None,
                 Some(ON_FILL),
@@ -1970,7 +1970,7 @@ class OandaApiClientSpec extends FlatSpec with Matchers with MockFactory {
                 TRAILING_STOP_LOSS_ORDER,
                 371,
                 None,
-                0.00159,
+                "0.00159",
                 GTC,
                 None,
                 Some(TrailingStopLossOrderReason.ON_FILL),
@@ -2012,13 +2012,13 @@ class OandaApiClientSpec extends FlatSpec with Matchers with MockFactory {
                 None,
                 "EUR_USD",
                 2500.0,
-                1.05774,
+                "1.05774",
                 Some(OrderFillReason.TRAILING_STOP_LOSS_ORDER),
                 -0.975,
                 -0.0011,
                 100027.4556,
                 None,
-                Some(Vector(TradeReduce(371, 2500.0, None, Some(-0.975), Some(-0.0011)))),
+                Some(List(TradeReduce(371, 2500.0, None, Some(-0.975), Some(-0.0011)))),
                 None
               ),
               OrderCancelTransaction(
@@ -2048,9 +2048,9 @@ class OandaApiClientSpec extends FlatSpec with Matchers with MockFactory {
             100027.4556,
             0.0,
             0.0,
-            Vector(),
-            Vector(),
-            Vector()
+            List(),
+            List(),
+            List()
           ),
           377
         )

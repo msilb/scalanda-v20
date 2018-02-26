@@ -48,9 +48,9 @@ val orderIdFut = for {
     CreateOrderRequest(
       LimitOrderRequest(
         instrument = "EUR_USD",
-        price = (math floor candlesticks.last.mid.get.h * 100000) / 100000,
+        price = candlesticks.last.mid.get.h,
         units = -1500,
-        takeProfitOnFill = Some(TakeProfitDetails(price = 1.09))
+        takeProfitOnFill = Some(TakeProfitDetails(price = "1.09"))
       )
     )
   ).collect { case Right(r) => r }

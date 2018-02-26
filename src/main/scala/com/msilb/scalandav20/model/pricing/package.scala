@@ -11,7 +11,7 @@ import io.circe.java8.time._
 
 package object pricing {
 
-  type PriceValue = Double
+  type PriceValue = String
 
   sealed trait PricingStreamItem
 

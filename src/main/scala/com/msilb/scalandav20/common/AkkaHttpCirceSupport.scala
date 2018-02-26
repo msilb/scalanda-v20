@@ -18,12 +18,9 @@ trait AkkaHttpCirceSupport {
         case (data, charset) => data.decodeString(charset.nioCharset.name)
       }
 
-  private val jsonStringMarshaller =
-    Marshaller.stringMarshaller(`application/json`)
+  private val jsonStringMarshaller = Marshaller.stringMarshaller(`application/json`)
 
-  implicit def circeUnmarshaller[A](
-                                     implicit decoder: Decoder[A]
-                                   ): FromEntityUnmarshaller[A] =
+  implicit def circeUnmarshaller[A](implicit decoder: Decoder[A]): FromEntityUnmarshaller[A] =
     jsonStringUnmarshaller.map(jawn.decode(_).fold(throw _, identity))
 
   implicit def circeToEntityMarshaller[A](implicit encoder: Encoder[A],

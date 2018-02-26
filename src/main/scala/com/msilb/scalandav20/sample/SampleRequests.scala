@@ -73,7 +73,7 @@ object SampleRequests extends App {
       MarketOrderRequest(
         instrument = "EUR_USD",
         units = 1000,
-        takeProfitOnFill = Some(TakeProfitDetails(price = 1.09))
+        takeProfitOnFill = Some(TakeProfitDetails(price = "1.09"))
       )
     )
   )
@@ -91,7 +91,7 @@ object SampleRequests extends App {
   val replaceOrderFut = client.replaceOrder(
     accountId,
     "108",
-    ReplaceOrderRequest(MarketIfTouchedOrderRequest(instrument = "USD_JPY", units = 4500, price = 115.45))
+    ReplaceOrderRequest(MarketIfTouchedOrderRequest(instrument = "USD_JPY", units = 4500, price = "115.45"))
   )
   println(Await.result(replaceOrderFut, timeout).toString)
 
@@ -123,13 +123,13 @@ object SampleRequests extends App {
     TradesDependentOrdersModifyRequest(
       stopLoss = Some(
         StopLossDetails(
-          price = 1.0602,
+          price = "1.0602",
           timeInForce = GTD, gtdTime = Some(Instant.now().plus(3, DAYS))
         )
       ),
       trailingStopLoss = Some(
         TrailingStopLossDetails(
-          distance = 0.001,
+          distance = "0.001",
           timeInForce = GTC,
           clientExtensions = Some(ClientExtensions(comment = Some("trailing")))
         )
@@ -189,9 +189,9 @@ object SampleRequests extends App {
       CreateOrderRequest(
         LimitOrderRequest(
           instrument = "EUR_USD",
-          price = (math floor candlesticks.last.mid.get.h * 100000) / 100000,
+          price = candlesticks.last.mid.get.h,
           units = -1500,
-          takeProfitOnFill = Some(TakeProfitDetails(price = 1.09))
+          takeProfitOnFill = Some(TakeProfitDetails(price = "1.09"))
         )
       )
     ).collect { case Right(r) => r }
@@ -204,4 +204,5 @@ object SampleRequests extends App {
   Thread.sleep(5000)
 
   client.shutdown()
+  system.terminate()
 }
