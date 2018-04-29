@@ -36,9 +36,10 @@ where `Practice` indicates that you want to connect to Oanda's fxTrade Practice 
 Here is a quick example of how to fetch historical data and place a limit order at the high of the previous candle:
 
 ```scala
+val instrument = "EUR_USR"
 val orderIdFut = for {
   candlesticks <- client.getCandlesticks(
-    "EUR_USD",
+    instrument,
     granularity = Some(H1),
     count = Some(4),
     includeFirst = Some(false)
@@ -47,10 +48,10 @@ val orderIdFut = for {
     accountId,
     CreateOrderRequest(
       LimitOrderRequest(
-        instrument = "EUR_USD",
+        instrument = instrument,
         price = candlesticks.last.mid.get.h,
         units = -1500,
-        takeProfitOnFill = Some(TakeProfitDetails(price = "1.09"))
+        takeProfitOnFill = Some(TakeProfitDetails(price = 1.09))
       )
     )
   ).collect { case Right(r) => r }
