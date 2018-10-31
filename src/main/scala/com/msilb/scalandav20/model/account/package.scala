@@ -29,6 +29,8 @@ package object account {
 
     def createdTime: Instant
 
+    def guaranteedStopLossOrderMode: Option[GuaranteedStopLossOrderMode]
+
     def pl: AccountUnits
 
     def resettablePL: AccountUnits
@@ -85,6 +87,7 @@ package object account {
                             override val balance: AccountUnits,
                             override val createdByUserID: Int,
                             override val createdTime: Instant,
+                            override val guaranteedStopLossOrderMode: Option[GuaranteedStopLossOrderMode],
                             override val pl: AccountUnits,
                             override val resettablePL: AccountUnits,
                             override val resettablePLTime: Option[Instant],
@@ -117,6 +120,7 @@ package object account {
                      override val balance: AccountUnits,
                      override val createdByUserID: Int,
                      override val createdTime: Instant,
+                     override val guaranteedStopLossOrderMode: Option[GuaranteedStopLossOrderMode],
                      override val pl: AccountUnits,
                      override val resettablePL: AccountUnits,
                      override val resettablePLTime: Option[Instant],
@@ -166,6 +170,20 @@ package object account {
   case class AccountProperties(id: String,
                                mt4AccountID: Option[Int],
                                tags: Seq[String])
+
+  sealed trait GuaranteedStopLossOrderMode
+
+  object GuaranteedStopLossOrderMode {
+
+    case object DISABLED extends GuaranteedStopLossOrderMode
+
+    case object ALLOWED extends GuaranteedStopLossOrderMode
+
+    case object REQUIRED extends GuaranteedStopLossOrderMode
+
+    implicit val decodeGuaranteedStopLossOrderMode: Decoder[GuaranteedStopLossOrderMode] = deriveEnumerationDecoder
+    implicit val encodeGuaranteedStopLossOrderMode: Encoder[GuaranteedStopLossOrderMode] = deriveEnumerationEncoder
+  }
 
   @JsonCodec
   case class AccountChanges(ordersCreated: Seq[Order],

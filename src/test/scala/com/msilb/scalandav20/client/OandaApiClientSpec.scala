@@ -10,6 +10,7 @@ import com.msilb.scalandav20.client.Request.AccountConfigChangeRequest
 import com.msilb.scalandav20.client.Response.ConfigureAccountResponse.{ConfigureAccountFailureResponse, ConfigureAccountSuccessResponse}
 import com.msilb.scalandav20.client.Response._
 import com.msilb.scalandav20.common.Environment.Practice
+import com.msilb.scalandav20.model.account.GuaranteedStopLossOrderMode.DISABLED
 import com.msilb.scalandav20.model.account._
 import com.msilb.scalandav20.model.orders.MarketOrderTradeClose
 import com.msilb.scalandav20.model.orders.Order.{LimitOrder, MarketOrder, TakeProfitOrder, TrailingStopLossOrder}
@@ -393,6 +394,7 @@ class OandaApiClientSpec extends FlatSpec with Matchers with MockFactory {
             43650.78835,
             1234567,
             Instant.parse("2015-08-12T18:21:00.697504698Z"),
+            None,
             -56034.41199,
             -56034.41199,
             None,
@@ -731,6 +733,7 @@ class OandaApiClientSpec extends FlatSpec with Matchers with MockFactory {
                 |    "balance": "43650.78835",
                 |    "createdByUserID": 123456,
                 |    "createdTime": "2015-08-12T18:21:00.697504698Z",
+                |    "guaranteedStopLossOrderMode": "DISABLED",
                 |    "currency": "CHF",
                 |    "hedgingEnabled": false,
                 |    "id": "12345-6789",
@@ -772,6 +775,7 @@ class OandaApiClientSpec extends FlatSpec with Matchers with MockFactory {
             43650.78835,
             123456,
             Instant.parse("2015-08-12T18:21:00.697504698Z"),
+            Some(DISABLED),
             -56034.41199,
             -56034.41199,
             None,
