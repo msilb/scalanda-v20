@@ -21,7 +21,7 @@ scalacOptions := Seq(
 )
 
 libraryDependencies ++= {
-  val circeV = "0.10.0"
+  val circeV = "0.10.1"
   val akkaV = "2.5.17"
   val akkaHttpV = "10.1.5"
   val scalaTestV = "3.0.5"
