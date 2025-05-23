@@ -17,7 +17,7 @@ import io.circe.java8.time._
 
 package object orders {
 
-  type OrderID = Long
+  type OrderID        = Long
   type OrderSpecifier = String
 
   sealed trait Order {
@@ -33,196 +33,210 @@ package object orders {
   object Order {
 
     @JsonCodec
-    case class MarketOrder(override val id: OrderID,
-                           override val createTime: Instant,
-                           override val state: OrderState,
-                           override val clientExtensions: Option[ClientExtensions],
-                           `type`: OrderType,
-                           instrument: InstrumentName,
-                           units: DecimalNumber,
-                           timeInForce: TimeInForce,
-                           priceBound: Option[PriceValue],
-                           positionFill: Option[OrderPositionFill],
-                           tradeClose: Option[MarketOrderTradeClose],
-                           longPositionCloseout: Option[MarketOrderPositionCloseout],
-                           shortPositionCloseout: Option[MarketOrderPositionCloseout],
-                           marginCloseout: Option[MarketOrderMarginCloseout],
-                           delayedTradeClose: Option[MarketOrderDelayedTradeClose],
-                           takeProfitOnFill: Option[TakeProfitDetails],
-                           stopLossOnFill: Option[StopLossDetails],
-                           trailingStopLossOnFill: Option[TrailingStopLossDetails],
-                           tradeClientExtensions: Option[ClientExtensions],
-                           fillingTransactionID: Option[TransactionID],
-                           filledTime: Option[Instant],
-                           tradeOpenedID: Option[TradeID],
-                           tradeReducedID: Option[TradeID],
-                           tradeClosedIDs: Option[Seq[TradeID]],
-                           cancellingTransactionID: Option[TransactionID],
-                           cancelledTime: Option[Instant]) extends Order
+    case class MarketOrder(
+      override val id: OrderID,
+      override val createTime: Instant,
+      override val state: OrderState,
+      override val clientExtensions: Option[ClientExtensions],
+      `type`: OrderType,
+      instrument: InstrumentName,
+      units: DecimalNumber,
+      timeInForce: TimeInForce,
+      priceBound: Option[PriceValue],
+      positionFill: Option[OrderPositionFill],
+      tradeClose: Option[MarketOrderTradeClose],
+      longPositionCloseout: Option[MarketOrderPositionCloseout],
+      shortPositionCloseout: Option[MarketOrderPositionCloseout],
+      marginCloseout: Option[MarketOrderMarginCloseout],
+      delayedTradeClose: Option[MarketOrderDelayedTradeClose],
+      takeProfitOnFill: Option[TakeProfitDetails],
+      stopLossOnFill: Option[StopLossDetails],
+      trailingStopLossOnFill: Option[TrailingStopLossDetails],
+      tradeClientExtensions: Option[ClientExtensions],
+      fillingTransactionID: Option[TransactionID],
+      filledTime: Option[Instant],
+      tradeOpenedID: Option[TradeID],
+      tradeReducedID: Option[TradeID],
+      tradeClosedIDs: Option[Seq[TradeID]],
+      cancellingTransactionID: Option[TransactionID],
+      cancelledTime: Option[Instant]
+    ) extends Order
 
     @JsonCodec
-    case class LimitOrder(override val id: OrderID,
-                          override val createTime: Instant,
-                          override val state: OrderState,
-                          override val clientExtensions: Option[ClientExtensions],
-                          `type`: OrderType,
-                          instrument: InstrumentName,
-                          units: DecimalNumber,
-                          price: PriceValue,
-                          timeInForce: TimeInForce,
-                          gtdTime: Option[Instant],
-                          positionFill: Option[OrderPositionFill],
-                          takeProfitOnFill: Option[TakeProfitDetails],
-                          stopLossOnFill: Option[StopLossDetails],
-                          trailingStopLossOnFill: Option[TrailingStopLossDetails],
-                          tradeClientExtensions: Option[ClientExtensions],
-                          fillingTransactionID: Option[TransactionID],
-                          filledTime: Option[Instant],
-                          tradeOpenedID: Option[TradeID],
-                          tradeReducedID: Option[TradeID],
-                          tradeClosedIDs: Option[Seq[TradeID]],
-                          cancellingTransactionID: Option[TransactionID],
-                          cancelledTime: Option[Instant],
-                          replacesOrderID: Option[OrderID],
-                          replacedByOrderID: Option[OrderID]) extends Order
+    case class LimitOrder(
+      override val id: OrderID,
+      override val createTime: Instant,
+      override val state: OrderState,
+      override val clientExtensions: Option[ClientExtensions],
+      `type`: OrderType,
+      instrument: InstrumentName,
+      units: DecimalNumber,
+      price: PriceValue,
+      timeInForce: TimeInForce,
+      gtdTime: Option[Instant],
+      positionFill: Option[OrderPositionFill],
+      takeProfitOnFill: Option[TakeProfitDetails],
+      stopLossOnFill: Option[StopLossDetails],
+      trailingStopLossOnFill: Option[TrailingStopLossDetails],
+      tradeClientExtensions: Option[ClientExtensions],
+      fillingTransactionID: Option[TransactionID],
+      filledTime: Option[Instant],
+      tradeOpenedID: Option[TradeID],
+      tradeReducedID: Option[TradeID],
+      tradeClosedIDs: Option[Seq[TradeID]],
+      cancellingTransactionID: Option[TransactionID],
+      cancelledTime: Option[Instant],
+      replacesOrderID: Option[OrderID],
+      replacedByOrderID: Option[OrderID]
+    ) extends Order
 
     @JsonCodec
-    case class StopOrder(override val id: OrderID,
-                         override val createTime: Instant,
-                         override val state: OrderState,
-                         override val clientExtensions: Option[ClientExtensions],
-                         `type`: OrderType,
-                         instrument: InstrumentName,
-                         units: DecimalNumber,
-                         price: PriceValue,
-                         priceBound: Option[PriceValue],
-                         timeInForce: TimeInForce,
-                         gtdTime: Option[Instant],
-                         positionFill: Option[OrderPositionFill],
-                         takeProfitOnFill: Option[TakeProfitDetails],
-                         stopLossOnFill: Option[StopLossDetails],
-                         trailingStopLossOnFill: Option[TrailingStopLossDetails],
-                         tradeClientExtensions: Option[ClientExtensions],
-                         fillingTransactionID: Option[TransactionID],
-                         filledTime: Option[Instant],
-                         tradeOpenedID: Option[TradeID],
-                         tradeReducedID: Option[TradeID],
-                         tradeClosedIDs: Option[Seq[TradeID]],
-                         cancellingTransactionID: Option[TransactionID],
-                         cancelledTime: Option[Instant],
-                         replacesOrderID: Option[OrderID],
-                         replacedByOrderID: Option[OrderID]) extends Order
+    case class StopOrder(
+      override val id: OrderID,
+      override val createTime: Instant,
+      override val state: OrderState,
+      override val clientExtensions: Option[ClientExtensions],
+      `type`: OrderType,
+      instrument: InstrumentName,
+      units: DecimalNumber,
+      price: PriceValue,
+      priceBound: Option[PriceValue],
+      timeInForce: TimeInForce,
+      gtdTime: Option[Instant],
+      positionFill: Option[OrderPositionFill],
+      takeProfitOnFill: Option[TakeProfitDetails],
+      stopLossOnFill: Option[StopLossDetails],
+      trailingStopLossOnFill: Option[TrailingStopLossDetails],
+      tradeClientExtensions: Option[ClientExtensions],
+      fillingTransactionID: Option[TransactionID],
+      filledTime: Option[Instant],
+      tradeOpenedID: Option[TradeID],
+      tradeReducedID: Option[TradeID],
+      tradeClosedIDs: Option[Seq[TradeID]],
+      cancellingTransactionID: Option[TransactionID],
+      cancelledTime: Option[Instant],
+      replacesOrderID: Option[OrderID],
+      replacedByOrderID: Option[OrderID]
+    ) extends Order
 
     @JsonCodec
-    case class MarketIfTouchedOrder(override val id: OrderID,
-                                    override val createTime: Instant,
-                                    override val state: OrderState,
-                                    override val clientExtensions: Option[ClientExtensions],
-                                    `type`: OrderType,
-                                    instrument: InstrumentName,
-                                    units: DecimalNumber,
-                                    price: PriceValue,
-                                    priceBound: Option[PriceValue],
-                                    timeInForce: TimeInForce,
-                                    gtdTime: Option[Instant],
-                                    positionFill: Option[OrderPositionFill],
-                                    initialMarketPrice: Option[PriceValue],
-                                    takeProfitOnFill: Option[TakeProfitDetails],
-                                    stopLossOnFill: Option[StopLossDetails],
-                                    trailingStopLossOnFill: Option[TrailingStopLossDetails],
-                                    tradeClientExtensions: Option[ClientExtensions],
-                                    fillingTransactionID: Option[TransactionID],
-                                    filledTime: Option[Instant],
-                                    tradeOpenedID: Option[TradeID],
-                                    tradeReducedID: Option[TradeID],
-                                    tradeClosedIDs: Option[Seq[TradeID]],
-                                    cancellingTransactionID: Option[TransactionID],
-                                    cancelledTime: Option[Instant],
-                                    replacesOrderID: Option[OrderID],
-                                    replacedByOrderID: Option[OrderID]) extends Order
+    case class MarketIfTouchedOrder(
+      override val id: OrderID,
+      override val createTime: Instant,
+      override val state: OrderState,
+      override val clientExtensions: Option[ClientExtensions],
+      `type`: OrderType,
+      instrument: InstrumentName,
+      units: DecimalNumber,
+      price: PriceValue,
+      priceBound: Option[PriceValue],
+      timeInForce: TimeInForce,
+      gtdTime: Option[Instant],
+      positionFill: Option[OrderPositionFill],
+      initialMarketPrice: Option[PriceValue],
+      takeProfitOnFill: Option[TakeProfitDetails],
+      stopLossOnFill: Option[StopLossDetails],
+      trailingStopLossOnFill: Option[TrailingStopLossDetails],
+      tradeClientExtensions: Option[ClientExtensions],
+      fillingTransactionID: Option[TransactionID],
+      filledTime: Option[Instant],
+      tradeOpenedID: Option[TradeID],
+      tradeReducedID: Option[TradeID],
+      tradeClosedIDs: Option[Seq[TradeID]],
+      cancellingTransactionID: Option[TransactionID],
+      cancelledTime: Option[Instant],
+      replacesOrderID: Option[OrderID],
+      replacedByOrderID: Option[OrderID]
+    ) extends Order
 
     @JsonCodec
-    case class TakeProfitOrder(override val id: OrderID,
-                               override val createTime: Instant,
-                               override val state: OrderState,
-                               override val clientExtensions: Option[ClientExtensions],
-                               `type`: OrderType,
-                               tradeID: TradeID,
-                               clientTradeID: Option[ClientID],
-                               price: PriceValue,
-                               timeInForce: TimeInForce,
-                               gtdTime: Option[Instant],
-                               fillingTransactionID: Option[TransactionID],
-                               filledTime: Option[Instant],
-                               tradeOpenedID: Option[TradeID],
-                               tradeReducedID: Option[TradeID],
-                               tradeClosedIDs: Option[Seq[TradeID]],
-                               cancellingTransactionID: Option[TransactionID],
-                               cancelledTime: Option[Instant],
-                               replacesOrderID: Option[OrderID],
-                               replacedByOrderID: Option[OrderID]) extends Order
+    case class TakeProfitOrder(
+      override val id: OrderID,
+      override val createTime: Instant,
+      override val state: OrderState,
+      override val clientExtensions: Option[ClientExtensions],
+      `type`: OrderType,
+      tradeID: TradeID,
+      clientTradeID: Option[ClientID],
+      price: PriceValue,
+      timeInForce: TimeInForce,
+      gtdTime: Option[Instant],
+      fillingTransactionID: Option[TransactionID],
+      filledTime: Option[Instant],
+      tradeOpenedID: Option[TradeID],
+      tradeReducedID: Option[TradeID],
+      tradeClosedIDs: Option[Seq[TradeID]],
+      cancellingTransactionID: Option[TransactionID],
+      cancelledTime: Option[Instant],
+      replacesOrderID: Option[OrderID],
+      replacedByOrderID: Option[OrderID]
+    ) extends Order
 
     @JsonCodec
-    case class StopLossOrder(override val id: OrderID,
-                             override val createTime: Instant,
-                             override val state: OrderState,
-                             override val clientExtensions: Option[ClientExtensions],
-                             `type`: OrderType,
-                             tradeID: TradeID,
-                             clientTradeID: Option[ClientID],
-                             price: PriceValue,
-                             timeInForce: TimeInForce,
-                             gtdTime: Option[Instant],
-                             fillingTransactionID: Option[TransactionID],
-                             filledTime: Option[Instant],
-                             tradeOpenedID: Option[TradeID],
-                             tradeReducedID: Option[TradeID],
-                             tradeClosedIDs: Option[Seq[TradeID]],
-                             cancellingTransactionID: Option[TransactionID],
-                             cancelledTime: Option[Instant],
-                             replacesOrderID: Option[OrderID],
-                             replacedByOrderID: Option[OrderID]) extends Order
+    case class StopLossOrder(
+      override val id: OrderID,
+      override val createTime: Instant,
+      override val state: OrderState,
+      override val clientExtensions: Option[ClientExtensions],
+      `type`: OrderType,
+      tradeID: TradeID,
+      clientTradeID: Option[ClientID],
+      price: PriceValue,
+      timeInForce: TimeInForce,
+      gtdTime: Option[Instant],
+      fillingTransactionID: Option[TransactionID],
+      filledTime: Option[Instant],
+      tradeOpenedID: Option[TradeID],
+      tradeReducedID: Option[TradeID],
+      tradeClosedIDs: Option[Seq[TradeID]],
+      cancellingTransactionID: Option[TransactionID],
+      cancelledTime: Option[Instant],
+      replacesOrderID: Option[OrderID],
+      replacedByOrderID: Option[OrderID]
+    ) extends Order
 
     @JsonCodec
-    case class TrailingStopLossOrder(override val id: OrderID,
-                                     override val createTime: Instant,
-                                     override val state: OrderState,
-                                     override val clientExtensions: Option[ClientExtensions],
-                                     `type`: OrderType,
-                                     tradeID: TradeID,
-                                     clientTradeID: Option[ClientID],
-                                     distance: PriceValue,
-                                     timeInForce: TimeInForce,
-                                     gtdTime: Option[Instant],
-                                     trailingStopValue: PriceValue,
-                                     fillingTransactionID: Option[TransactionID],
-                                     filledTime: Option[Instant],
-                                     tradeOpenedID: Option[TradeID],
-                                     tradeReducedID: Option[TradeID],
-                                     tradeClosedIDs: Option[Seq[TradeID]],
-                                     cancellingTransactionID: Option[TransactionID],
-                                     cancelledTime: Option[Instant],
-                                     replacesOrderID: Option[OrderID],
-                                     replacedByOrderID: Option[OrderID]) extends Order
+    case class TrailingStopLossOrder(
+      override val id: OrderID,
+      override val createTime: Instant,
+      override val state: OrderState,
+      override val clientExtensions: Option[ClientExtensions],
+      `type`: OrderType,
+      tradeID: TradeID,
+      clientTradeID: Option[ClientID],
+      distance: PriceValue,
+      timeInForce: TimeInForce,
+      gtdTime: Option[Instant],
+      trailingStopValue: PriceValue,
+      fillingTransactionID: Option[TransactionID],
+      filledTime: Option[Instant],
+      tradeOpenedID: Option[TradeID],
+      tradeReducedID: Option[TradeID],
+      tradeClosedIDs: Option[Seq[TradeID]],
+      cancellingTransactionID: Option[TransactionID],
+      cancelledTime: Option[Instant],
+      replacesOrderID: Option[OrderID],
+      replacedByOrderID: Option[OrderID]
+    ) extends Order
 
     implicit val decodeOrder: Decoder[Order] = Decoder.instance { c =>
       c.downField("type").as[OrderType].flatMap {
-        case MARKET => c.as[MarketOrder]
-        case LIMIT => c.as[LimitOrder]
-        case STOP => c.as[StopOrder]
-        case MARKET_IF_TOUCHED => c.as[MarketIfTouchedOrder]
-        case TAKE_PROFIT => c.as[TakeProfitOrder]
-        case STOP_LOSS => c.as[StopLossOrder]
+        case MARKET             => c.as[MarketOrder]
+        case LIMIT              => c.as[LimitOrder]
+        case STOP               => c.as[StopOrder]
+        case MARKET_IF_TOUCHED  => c.as[MarketIfTouchedOrder]
+        case TAKE_PROFIT        => c.as[TakeProfitOrder]
+        case STOP_LOSS          => c.as[StopLossOrder]
         case TRAILING_STOP_LOSS => c.as[TrailingStopLossOrder]
       }
     }
     implicit val encodeOrder: Encoder[Order] = Encoder.instance {
-      case t: MarketOrder => t.asJson
-      case t: LimitOrder => t.asJson
-      case t: StopOrder => t.asJson
-      case t: MarketIfTouchedOrder => t.asJson
-      case t: TakeProfitOrder => t.asJson
-      case t: StopLossOrder => t.asJson
+      case t: MarketOrder           => t.asJson
+      case t: LimitOrder            => t.asJson
+      case t: StopOrder             => t.asJson
+      case t: MarketIfTouchedOrder  => t.asJson
+      case t: TakeProfitOrder       => t.asJson
+      case t: StopLossOrder         => t.asJson
       case t: TrailingStopLossOrder => t.asJson
     }
   }
@@ -320,18 +334,26 @@ package object orders {
 
     case object REGULATORY_MARGIN_CALL_VIOLATION extends MarketOrderMarginCloseoutReason
 
-    implicit val decodeMarketOrderMarginCloseoutReason: Decoder[MarketOrderMarginCloseoutReason] = deriveEnumerationDecoder
-    implicit val encodeMarketOrderMarginCloseoutReason: Encoder[MarketOrderMarginCloseoutReason] = deriveEnumerationEncoder
+    implicit val decodeMarketOrderMarginCloseoutReason: Decoder[MarketOrderMarginCloseoutReason] =
+      deriveEnumerationDecoder
+    implicit val encodeMarketOrderMarginCloseoutReason: Encoder[MarketOrderMarginCloseoutReason] =
+      deriveEnumerationEncoder
   }
 
   @JsonCodec
-  case class MarketOrderDelayedTradeClose(tradeID: TradeID, clientTradeID: Option[TradeID], sourceTransactionID: TransactionID)
+  case class MarketOrderDelayedTradeClose(
+    tradeID: TradeID,
+    clientTradeID: Option[TradeID],
+    sourceTransactionID: TransactionID
+  )
 
   @JsonCodec
-  case class DynamicOrderState(id: OrderID,
-                               trailingStopValue: PriceValue,
-                               triggerDistance: Option[PriceValue],
-                               isTriggerDistanceExact: Option[Boolean])
+  case class DynamicOrderState(
+    id: OrderID,
+    trailingStopValue: PriceValue,
+    triggerDistance: Option[PriceValue],
+    isTriggerDistanceExact: Option[Boolean]
+  )
 
   sealed trait OrderRequest {
     def `type`: OrderType
@@ -340,107 +362,121 @@ package object orders {
   object OrderRequest {
 
     @JsonCodec
-    case class MarketOrderRequest(override val `type`: OrderType = MARKET,
-                                  instrument: InstrumentName,
-                                  units: DecimalNumber,
-                                  timeInForce: TimeInForce = FOK,
-                                  priceBound: Option[PriceValue] = None,
-                                  positionFill: OrderPositionFill = DEFAULT,
-                                  clientExtensions: Option[ClientExtensions] = None,
-                                  takeProfitOnFill: Option[TakeProfitDetails] = None,
-                                  stopLossOnFill: Option[StopLossDetails] = None,
-                                  trailingStopLossOnFill: Option[TrailingStopLossDetails] = None,
-                                  tradeClientExtensions: Option[ClientExtensions] = None) extends OrderRequest
+    case class MarketOrderRequest(
+      override val `type`: OrderType = MARKET,
+      instrument: InstrumentName,
+      units: DecimalNumber,
+      timeInForce: TimeInForce = FOK,
+      priceBound: Option[PriceValue] = None,
+      positionFill: OrderPositionFill = DEFAULT,
+      clientExtensions: Option[ClientExtensions] = None,
+      takeProfitOnFill: Option[TakeProfitDetails] = None,
+      stopLossOnFill: Option[StopLossDetails] = None,
+      trailingStopLossOnFill: Option[TrailingStopLossDetails] = None,
+      tradeClientExtensions: Option[ClientExtensions] = None
+    ) extends OrderRequest
 
     @JsonCodec
-    case class LimitOrderRequest(override val `type`: OrderType = LIMIT,
-                                 instrument: InstrumentName,
-                                 units: DecimalNumber,
-                                 price: PriceValue,
-                                 timeInForce: TimeInForce = GTC,
-                                 gtdTime: Option[Instant] = None,
-                                 positionFill: OrderPositionFill = DEFAULT,
-                                 clientExtensions: Option[ClientExtensions] = None,
-                                 takeProfitOnFill: Option[TakeProfitDetails] = None,
-                                 stopLossOnFill: Option[StopLossDetails] = None,
-                                 trailingStopLossOnFill: Option[TrailingStopLossDetails] = None,
-                                 tradeClientExtensions: Option[ClientExtensions] = None) extends OrderRequest
+    case class LimitOrderRequest(
+      override val `type`: OrderType = LIMIT,
+      instrument: InstrumentName,
+      units: DecimalNumber,
+      price: PriceValue,
+      timeInForce: TimeInForce = GTC,
+      gtdTime: Option[Instant] = None,
+      positionFill: OrderPositionFill = DEFAULT,
+      clientExtensions: Option[ClientExtensions] = None,
+      takeProfitOnFill: Option[TakeProfitDetails] = None,
+      stopLossOnFill: Option[StopLossDetails] = None,
+      trailingStopLossOnFill: Option[TrailingStopLossDetails] = None,
+      tradeClientExtensions: Option[ClientExtensions] = None
+    ) extends OrderRequest
 
     @JsonCodec
-    case class StopOrderRequest(override val `type`: OrderType = STOP,
-                                instrument: InstrumentName,
-                                units: DecimalNumber,
-                                price: PriceValue,
-                                priceBound: Option[PriceValue] = None,
-                                timeInForce: TimeInForce = GTC,
-                                gtdTime: Option[Instant] = None,
-                                positionFill: OrderPositionFill = DEFAULT,
-                                clientExtensions: Option[ClientExtensions] = None,
-                                takeProfitOnFill: Option[TakeProfitDetails] = None,
-                                stopLossOnFill: Option[StopLossDetails] = None,
-                                trailingStopLossOnFill: Option[TrailingStopLossDetails] = None,
-                                tradeClientExtensions: Option[ClientExtensions] = None) extends OrderRequest
+    case class StopOrderRequest(
+      override val `type`: OrderType = STOP,
+      instrument: InstrumentName,
+      units: DecimalNumber,
+      price: PriceValue,
+      priceBound: Option[PriceValue] = None,
+      timeInForce: TimeInForce = GTC,
+      gtdTime: Option[Instant] = None,
+      positionFill: OrderPositionFill = DEFAULT,
+      clientExtensions: Option[ClientExtensions] = None,
+      takeProfitOnFill: Option[TakeProfitDetails] = None,
+      stopLossOnFill: Option[StopLossDetails] = None,
+      trailingStopLossOnFill: Option[TrailingStopLossDetails] = None,
+      tradeClientExtensions: Option[ClientExtensions] = None
+    ) extends OrderRequest
 
     @JsonCodec
-    case class MarketIfTouchedOrderRequest(override val `type`: OrderType = MARKET_IF_TOUCHED,
-                                           instrument: InstrumentName,
-                                           units: DecimalNumber,
-                                           price: PriceValue,
-                                           priceBound: Option[PriceValue] = None,
-                                           timeInForce: TimeInForce = GTC,
-                                           gtdTime: Option[Instant] = None,
-                                           positionFill: OrderPositionFill = DEFAULT,
-                                           clientExtensions: Option[ClientExtensions] = None,
-                                           takeProfitOnFill: Option[TakeProfitDetails] = None,
-                                           stopLossOnFill: Option[StopLossDetails] = None,
-                                           trailingStopLossOnFill: Option[TrailingStopLossDetails] = None,
-                                           tradeClientExtensions: Option[ClientExtensions] = None) extends OrderRequest
+    case class MarketIfTouchedOrderRequest(
+      override val `type`: OrderType = MARKET_IF_TOUCHED,
+      instrument: InstrumentName,
+      units: DecimalNumber,
+      price: PriceValue,
+      priceBound: Option[PriceValue] = None,
+      timeInForce: TimeInForce = GTC,
+      gtdTime: Option[Instant] = None,
+      positionFill: OrderPositionFill = DEFAULT,
+      clientExtensions: Option[ClientExtensions] = None,
+      takeProfitOnFill: Option[TakeProfitDetails] = None,
+      stopLossOnFill: Option[StopLossDetails] = None,
+      trailingStopLossOnFill: Option[TrailingStopLossDetails] = None,
+      tradeClientExtensions: Option[ClientExtensions] = None
+    ) extends OrderRequest
 
     @JsonCodec
-    case class TakeProfitOrderRequest(override val `type`: OrderType = TAKE_PROFIT,
-                                      tradeID: TradeID,
-                                      clientTradeID: Option[ClientID] = None,
-                                      price: PriceValue,
-                                      timeInForce: TimeInForce = GTC,
-                                      gtdTime: Option[Instant] = None,
-                                      clientExtensions: Option[ClientExtensions] = None) extends OrderRequest
+    case class TakeProfitOrderRequest(
+      override val `type`: OrderType = TAKE_PROFIT,
+      tradeID: TradeID,
+      clientTradeID: Option[ClientID] = None,
+      price: PriceValue,
+      timeInForce: TimeInForce = GTC,
+      gtdTime: Option[Instant] = None,
+      clientExtensions: Option[ClientExtensions] = None
+    ) extends OrderRequest
 
     @JsonCodec
-    case class StopLossOrderRequest(override val `type`: OrderType = STOP_LOSS,
-                                    tradeID: TradeID,
-                                    clientTradeID: Option[ClientID] = None,
-                                    price: PriceValue,
-                                    timeInForce: TimeInForce = GTC,
-                                    gtdTime: Option[Instant] = None,
-                                    clientExtensions: Option[ClientExtensions] = None) extends OrderRequest
+    case class StopLossOrderRequest(
+      override val `type`: OrderType = STOP_LOSS,
+      tradeID: TradeID,
+      clientTradeID: Option[ClientID] = None,
+      price: PriceValue,
+      timeInForce: TimeInForce = GTC,
+      gtdTime: Option[Instant] = None,
+      clientExtensions: Option[ClientExtensions] = None
+    ) extends OrderRequest
 
     @JsonCodec
-    case class TrailingStopLossOrderRequest(override val `type`: OrderType = TRAILING_STOP_LOSS,
-                                            tradeID: TradeID,
-                                            clientTradeID: Option[ClientID] = None,
-                                            distance: PriceValue,
-                                            timeInForce: TimeInForce = GTC,
-                                            gtdTime: Option[Instant] = None,
-                                            clientExtensions: Option[ClientExtensions] = None) extends OrderRequest
+    case class TrailingStopLossOrderRequest(
+      override val `type`: OrderType = TRAILING_STOP_LOSS,
+      tradeID: TradeID,
+      clientTradeID: Option[ClientID] = None,
+      distance: PriceValue,
+      timeInForce: TimeInForce = GTC,
+      gtdTime: Option[Instant] = None,
+      clientExtensions: Option[ClientExtensions] = None
+    ) extends OrderRequest
 
     implicit val decodeOrderRequest: Decoder[OrderRequest] = Decoder.instance { c =>
       c.downField("type").as[OrderType].flatMap {
-        case MARKET => c.as[MarketOrderRequest]
-        case LIMIT => c.as[LimitOrderRequest]
-        case STOP => c.as[StopOrderRequest]
-        case MARKET_IF_TOUCHED => c.as[MarketIfTouchedOrderRequest]
-        case TAKE_PROFIT => c.as[TakeProfitOrderRequest]
-        case STOP_LOSS => c.as[StopLossOrderRequest]
+        case MARKET             => c.as[MarketOrderRequest]
+        case LIMIT              => c.as[LimitOrderRequest]
+        case STOP               => c.as[StopOrderRequest]
+        case MARKET_IF_TOUCHED  => c.as[MarketIfTouchedOrderRequest]
+        case TAKE_PROFIT        => c.as[TakeProfitOrderRequest]
+        case STOP_LOSS          => c.as[StopLossOrderRequest]
         case TRAILING_STOP_LOSS => c.as[TrailingStopLossOrderRequest]
       }
     }
     implicit val encodeOrderRequest: Encoder[OrderRequest] = Encoder.instance {
-      case t: MarketOrderRequest => t.asJson
-      case t: LimitOrderRequest => t.asJson
-      case t: StopOrderRequest => t.asJson
-      case t: MarketIfTouchedOrderRequest => t.asJson
-      case t: TakeProfitOrderRequest => t.asJson
-      case t: StopLossOrderRequest => t.asJson
+      case t: MarketOrderRequest           => t.asJson
+      case t: LimitOrderRequest            => t.asJson
+      case t: StopOrderRequest             => t.asJson
+      case t: MarketIfTouchedOrderRequest  => t.asJson
+      case t: TakeProfitOrderRequest       => t.asJson
+      case t: StopLossOrderRequest         => t.asJson
       case t: TrailingStopLossOrderRequest => t.asJson
     }
   }

@@ -1,7 +1,7 @@
 organization := "com.msilb"
 name := "scalanda-v20"
 
-scalaVersion := "2.12.7"
+scalaVersion := "2.12.18"
 
 scalacOptions := Seq(
   "-target:jvm-1.8",
@@ -21,11 +21,11 @@ scalacOptions := Seq(
 )
 
 libraryDependencies ++= {
-  val circeV = "0.10.1"
-  val akkaV = "2.5.17"
-  val akkaHttpV = "10.1.5"
-  val scalaTestV = "3.0.5"
-  val scalaMockV = "4.1.0"
+  val circeV = "0.14.3"
+  val akkaV = "2.6.20"
+  val akkaHttpV = "10.2.10"
+  val scalaTestV = "3.2.17"
+  val scalaMockV = "5.2.0"
   Seq(
     "com.typesafe.akka" %% "akka-http" % akkaHttpV,
     "com.typesafe.akka" %% "akka-actor" % akkaV,
@@ -44,5 +44,3 @@ libraryDependencies ++= {
 publishTo := sonatypePublishTo.value
 
 resolvers += Resolver.sonatypeRepo("releases")
-addCompilerPlugin("org.scalamacros" % "paradise" % "2.1.1" cross CrossVersion.full)
-addCompilerPlugin("org.psywerx.hairyfotr" %% "linter" % "0.1.17")

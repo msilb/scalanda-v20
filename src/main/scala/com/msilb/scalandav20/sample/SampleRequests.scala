@@ -7,11 +7,18 @@ import akka.actor.ActorSystem
 import akka.stream.ActorMaterializer
 import com.msilb.scalandav20.client.OandaApiClient
 import com.msilb.scalandav20.client.Request._
-import com.msilb.scalandav20.client.Response.CreateOrderResponse.{CreateOrderFailureResponse, CreateOrderSuccessResponse}
+import com.msilb.scalandav20.client.Response.CreateOrderResponse.{
+  CreateOrderFailureResponse,
+  CreateOrderSuccessResponse
+}
 import com.msilb.scalandav20.common.Environment.Practice
 import com.msilb.scalandav20.model.instrument.CandlestickGranularity.{D, H1, W}
 import com.msilb.scalandav20.model.instrument.WeeklyAlignment.Monday
-import com.msilb.scalandav20.model.orders.OrderRequest.{LimitOrderRequest, MarketIfTouchedOrderRequest, MarketOrderRequest}
+import com.msilb.scalandav20.model.orders.OrderRequest.{
+  LimitOrderRequest,
+  MarketIfTouchedOrderRequest,
+  MarketOrderRequest
+}
 import com.msilb.scalandav20.model.orders.TimeInForce.{GTC, GTD}
 import com.msilb.scalandav20.model.trades.ClientExtensions
 import com.msilb.scalandav20.model.transactions.TransactionFilter.{MARKET_ORDER, STOP_LOSS_ORDER}
@@ -22,13 +29,13 @@ import scala.concurrent.{Await, ExecutionContext}
 
 object SampleRequests extends App {
 
-  val client = new OandaApiClient(Practice, "YOUR_AUTH_BEARER_TOKEN")
+  val client    = new OandaApiClient(Practice, "YOUR_AUTH_BEARER_TOKEN")
   val accountId = "YOUR_ACCOUNT_ID"
-  val timeout = 5.seconds
+  val timeout   = 5.seconds
 
-  implicit val system: ActorSystem = client.system
+  implicit val system: ActorSystem             = client.system
   implicit val materializer: ActorMaterializer = client.materializer
-  implicit val ec: ExecutionContext = client.ec
+  implicit val ec: ExecutionContext            = client.ec
 
   val accountsListFut = client.getAccountsList
   println(Await.result(accountsListFut, timeout))
@@ -124,7 +131,8 @@ object SampleRequests extends App {
       stopLoss = Some(
         StopLossDetails(
           price = "1.0602",
-          timeInForce = GTD, gtdTime = Some(Instant.now().plus(3, DAYS))
+          timeInForce = GTD,
+          gtdTime = Some(Instant.now().plus(3, DAYS))
         )
       ),
       trailingStopLoss = Some(
@@ -157,7 +165,10 @@ object SampleRequests extends App {
   println(Await.result(getTransactionDetailsFut, timeout))
 
   val getTransactionsRangeFut = client.getTransactionsRange(
-    accountId, from = 1, to = 250, `type` = Some(Seq(MARKET_ORDER, STOP_LOSS_ORDER))
+    accountId,
+    from = 1,
+    to = 250,
+    `type` = Some(Seq(MARKET_ORDER, STOP_LOSS_ORDER))
   )
   println(Await.result(getTransactionsRangeFut, timeout))
 
@@ -178,23 +189,27 @@ object SampleRequests extends App {
   }
 
   val orderIdFut = for {
-    candlesticks <- client.getCandlesticks(
-      "EUR_USD",
-      granularity = Some(H1),
-      count = Some(4),
-      includeFirst = Some(false)
-    ).collect { case Right(r) => r.candles.filter(_.complete) }
-    marketOrder <- client.createOrder(
-      accountId,
-      CreateOrderRequest(
-        LimitOrderRequest(
-          instrument = "EUR_USD",
-          price = candlesticks.last.mid.get.h,
-          units = -1500,
-          takeProfitOnFill = Some(TakeProfitDetails(price = "1.09"))
+    candlesticks <- client
+      .getCandlesticks(
+        "EUR_USD",
+        granularity = Some(H1),
+        count = Some(4),
+        includeFirst = Some(false)
+      )
+      .collect { case Right(r) => r.candles.filter(_.complete) }
+    marketOrder <- client
+      .createOrder(
+        accountId,
+        CreateOrderRequest(
+          LimitOrderRequest(
+            instrument = "EUR_USD",
+            price = candlesticks.last.mid.get.h,
+            units = -1500,
+            takeProfitOnFill = Some(TakeProfitDetails(price = "1.09"))
+          )
         )
       )
-    ).collect { case Right(r) => r }
+      .collect { case Right(r) => r }
   } yield marketOrder match {
     case r: CreateOrderSuccessResponse => r.orderCreateTransaction.id
     case r: CreateOrderFailureResponse => throw new RuntimeException(r.errorMessage)

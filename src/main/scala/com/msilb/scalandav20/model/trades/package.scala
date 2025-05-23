@@ -14,7 +14,7 @@ import io.circe.java8.time._
 
 package object trades {
 
-  type TradeID = Long
+  type TradeID        = Long
   type TradeSpecifier = String
 
   sealed trait TradeState
@@ -32,9 +32,11 @@ package object trades {
   }
 
   @JsonCodec
-  case class ClientExtensions(id: Option[ClientID] = None,
-                              tag: Option[ClientTag] = None,
-                              comment: Option[ClientComment] = None)
+  case class ClientExtensions(
+    id: Option[ClientID] = None,
+    tag: Option[ClientTag] = None,
+    comment: Option[ClientComment] = None
+  )
 
   sealed trait TradeBase {
     def id: TradeID
@@ -65,40 +67,44 @@ package object trades {
   }
 
   @JsonCodec
-  case class Trade(override val id: TradeID,
-                   override val instrument: InstrumentName,
-                   override val price: PriceValue,
-                   override val openTime: Instant,
-                   override val state: TradeState,
-                   override val initialUnits: BigDecimal,
-                   override val currentUnits: BigDecimal,
-                   override val realizedPL: BigDecimal,
-                   override val unrealizedPL: Option[BigDecimal],
-                   override val closingTransactionIDs: Option[Seq[TransactionID]],
-                   override val financing: AccountUnits,
-                   override val closeTime: Option[Instant],
-                   override val clientExtensions: Option[ClientExtensions],
-                   takeProfitOrder: Option[TakeProfitOrder],
-                   stopLossOrder: Option[StopLossOrder],
-                   trailingStopLossOrder: Option[TrailingStopLossOrder]) extends TradeBase
+  case class Trade(
+    override val id: TradeID,
+    override val instrument: InstrumentName,
+    override val price: PriceValue,
+    override val openTime: Instant,
+    override val state: TradeState,
+    override val initialUnits: BigDecimal,
+    override val currentUnits: BigDecimal,
+    override val realizedPL: BigDecimal,
+    override val unrealizedPL: Option[BigDecimal],
+    override val closingTransactionIDs: Option[Seq[TransactionID]],
+    override val financing: AccountUnits,
+    override val closeTime: Option[Instant],
+    override val clientExtensions: Option[ClientExtensions],
+    takeProfitOrder: Option[TakeProfitOrder],
+    stopLossOrder: Option[StopLossOrder],
+    trailingStopLossOrder: Option[TrailingStopLossOrder]
+  ) extends TradeBase
 
   @JsonCodec
-  case class TradeSummary(override val id: TradeID,
-                          override val instrument: String,
-                          override val price: PriceValue,
-                          override val openTime: Instant,
-                          override val state: TradeState,
-                          override val initialUnits: BigDecimal,
-                          override val currentUnits: BigDecimal,
-                          override val realizedPL: BigDecimal,
-                          override val unrealizedPL: Option[BigDecimal],
-                          override val closingTransactionIDs: Option[Seq[TransactionID]],
-                          override val financing: AccountUnits,
-                          override val closeTime: Option[Instant],
-                          override val clientExtensions: Option[ClientExtensions],
-                          takeProfitOrderID: Option[OrderID],
-                          stopLossOrderID: Option[OrderID],
-                          trailingStopLossOrderID: Option[OrderID]) extends TradeBase
+  case class TradeSummary(
+    override val id: TradeID,
+    override val instrument: String,
+    override val price: PriceValue,
+    override val openTime: Instant,
+    override val state: TradeState,
+    override val initialUnits: BigDecimal,
+    override val currentUnits: BigDecimal,
+    override val realizedPL: BigDecimal,
+    override val unrealizedPL: Option[BigDecimal],
+    override val closingTransactionIDs: Option[Seq[TransactionID]],
+    override val financing: AccountUnits,
+    override val closeTime: Option[Instant],
+    override val clientExtensions: Option[ClientExtensions],
+    takeProfitOrderID: Option[OrderID],
+    stopLossOrderID: Option[OrderID],
+    trailingStopLossOrderID: Option[OrderID]
+  ) extends TradeBase
 
   @JsonCodec
   case class CalculatedTradeState(id: TradeID, unrealizedPL: AccountUnits)

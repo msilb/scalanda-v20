@@ -2,7 +2,6 @@
 
 [![Join the chat at https://gitter.im/scalanda-v20/Lobby](https://badges.gitter.im/scalanda-v20/Lobby.svg)](https://gitter.im/scalanda-v20/Lobby?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 [![Maven Central](https://img.shields.io/maven-central/v/com.msilb/scalanda-v20_2.12.svg)](http://search.maven.org/#search%7Cga%7C1%7Ca%3A%22scalanda-v20_2.12%22)
-[![Travis](https://img.shields.io/travis/msilb/scalanda-v20.svg)](https://travis-ci.org/msilb/scalanda-v20)
 [![Codecov](https://img.shields.io/codecov/c/github/msilb/scalanda-v20.svg)](https://codecov.io/gh/msilb/scalanda-v20)
 
 # scalanda-v20
@@ -11,10 +10,10 @@ scalanda-v20 is a light-weight Scala/Akka HTTP based client for Oanda's REST and
 
 # Install
 
-`scalanda-v20` is compiled for Scala 2.12. If you are using `sbt` just drop this dependency into your `build.sbt` and you should be good to go.
+`scalanda-v20` is compiled for Scala 2.12.18. If you are using `sbt` just drop this dependency into your `build.sbt` and you should be good to go.
 
 ```scala
-libraryDependencies += "com.msilb" %% "scalanda-v20" % "0.1.5"
+libraryDependencies += "com.msilb" %% "scalanda-v20" % "0.2.0"
 ```
 
 # Usage
@@ -26,10 +25,14 @@ For the full description of Oanda's REST and Stream APIs please consult their gr
 Create new instance of the API client using your [auth bearer token](http://developer.oanda.com/rest-live-v20/authentication):
 
 ```scala
+// You'll need an ActorSystem in implicit scope
+// import akka.actor.ActorSystem
+// implicit val system: ActorSystem = ActorSystem("my-system")
+
 val client = new OandaApiClient(Practice, "YOUR_AUTH_BEARER_TOKEN")
 ```
 
-where `Practice` indicates that you want to connect to Oanda's fxTrade Practice environment. Other possible value is `Production` for live trading.
+where `Practice` indicates that you want to connect to Oanda's fxTrade Practice environment. Other possible value is `Production` for live trading. Remember to eventually shut down the `ActorSystem` when it's no longer needed: `system.terminate()`.
 
 ## Usage examples
 

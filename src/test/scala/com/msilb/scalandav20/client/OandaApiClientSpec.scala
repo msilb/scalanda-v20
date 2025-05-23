@@ -7,14 +7,22 @@ import akka.http.scaladsl.model.HttpMethods._
 import akka.http.scaladsl.model.Uri.Query
 import akka.http.scaladsl.model._
 import com.msilb.scalandav20.client.Request.AccountConfigChangeRequest
-import com.msilb.scalandav20.client.Response.ConfigureAccountResponse.{ConfigureAccountFailureResponse, ConfigureAccountSuccessResponse}
+import com.msilb.scalandav20.client.Response.ConfigureAccountResponse.{
+  ConfigureAccountFailureResponse,
+  ConfigureAccountSuccessResponse
+}
 import com.msilb.scalandav20.client.Response._
 import com.msilb.scalandav20.common.Environment.Practice
 import com.msilb.scalandav20.model.account.GuaranteedStopLossOrderMode.DISABLED
 import com.msilb.scalandav20.model.account._
 import com.msilb.scalandav20.model.orders.MarketOrderTradeClose
 import com.msilb.scalandav20.model.orders.Order.{LimitOrder, MarketOrder, TakeProfitOrder, TrailingStopLossOrder}
-import com.msilb.scalandav20.model.orders.OrderPositionFill.{DEFAULT, POSITION_DEFAULT, POSITION_REDUCE_ONLY, REDUCE_ONLY}
+import com.msilb.scalandav20.model.orders.OrderPositionFill.{
+  DEFAULT,
+  POSITION_DEFAULT,
+  POSITION_REDUCE_ONLY,
+  REDUCE_ONLY
+}
 import com.msilb.scalandav20.model.orders.OrderState.{CANCELLED, FILLED}
 import com.msilb.scalandav20.model.orders.OrderType.{LIMIT, MARKET, TAKE_PROFIT, TRAILING_STOP_LOSS}
 import com.msilb.scalandav20.model.orders.TimeInForce.{FOK, GTC}
@@ -28,9 +36,31 @@ import com.msilb.scalandav20.model.transactions.MarketOrderReason.TRADE_CLOSE
 import com.msilb.scalandav20.model.transactions.OrderCancelReason.{CLIENT_REQUEST, LINKED_TRADE_CLOSED}
 import com.msilb.scalandav20.model.transactions.OrderFillReason.{LIMIT_ORDER, MARKET_ORDER_TRADE_CLOSE}
 import com.msilb.scalandav20.model.transactions.TakeProfitOrderReason.ON_FILL
-import com.msilb.scalandav20.model.transactions.Transaction.{ClientConfigureRejectTransaction, ClientConfigureTransaction, LimitOrderRejectTransaction, LimitOrderTransaction, MarketOrderTransaction, OrderCancelTransaction, OrderFillTransaction, TakeProfitOrderTransaction, TrailingStopLossOrderTransaction}
-import com.msilb.scalandav20.model.transactions.TransactionRejectReason.{MARGIN_RATE_WOULD_TRIGGER_CLOSEOUT, PRICE_PRECISION_EXCEEDED}
-import com.msilb.scalandav20.model.transactions.TransactionType.{CLIENT_CONFIGURE, CLIENT_CONFIGURE_REJECT, LIMIT_ORDER_REJECT, MARKET_ORDER, ORDER_CANCEL, ORDER_FILL, TAKE_PROFIT_ORDER, TRAILING_STOP_LOSS_ORDER}
+import com.msilb.scalandav20.model.transactions.Transaction.{
+  ClientConfigureRejectTransaction,
+  ClientConfigureTransaction,
+  LimitOrderRejectTransaction,
+  LimitOrderTransaction,
+  MarketOrderTransaction,
+  OrderCancelTransaction,
+  OrderFillTransaction,
+  TakeProfitOrderTransaction,
+  TrailingStopLossOrderTransaction
+}
+import com.msilb.scalandav20.model.transactions.TransactionRejectReason.{
+  MARGIN_RATE_WOULD_TRIGGER_CLOSEOUT,
+  PRICE_PRECISION_EXCEEDED
+}
+import com.msilb.scalandav20.model.transactions.TransactionType.{
+  CLIENT_CONFIGURE,
+  CLIENT_CONFIGURE_REJECT,
+  LIMIT_ORDER_REJECT,
+  MARKET_ORDER,
+  ORDER_CANCEL,
+  ORDER_FILL,
+  TAKE_PROFIT_ORDER,
+  TRAILING_STOP_LOSS_ORDER
+}
 import com.msilb.scalandav20.model.transactions._
 import org.scalamock.function.MockFunction1
 import org.scalamock.scalatest.MockFactory
@@ -57,8 +87,7 @@ class OandaApiClientSpec extends FlatSpec with Matchers with MockFactory {
 
   "OandaApiClient" should "return a list of accounts" in {
 
-    client
-      .mock
+    client.mock
       .expects(client.baseRequest.withUri(client.baseRestUri.withPath(client.basePath / "accounts")))
       .returning(
         Future.successful(
@@ -99,8 +128,7 @@ class OandaApiClientSpec extends FlatSpec with Matchers with MockFactory {
 
   it should "return details for a specific account" in {
 
-    client
-      .mock
+    client.mock
       .expects(client.baseRequest.withUri(client.baseRestUri.withPath(client.basePath / "accounts" / "12345-6789")))
       .returning(
         Future.successful(
@@ -470,13 +498,7 @@ class OandaApiClientSpec extends FlatSpec with Matchers with MockFactory {
                 0.35963,
                 Some(0.0),
                 0.35963,
-                PositionSide(
-                  0.0,
-                  None,
-                  None,
-                  0.35963,
-                  Some(0.0),
-                  0.35963),
+                PositionSide(0.0, None, None, 0.35963, Some(0.0), 0.35963),
                 PositionSide(
                   0.0,
                   None,
@@ -717,9 +739,10 @@ class OandaApiClientSpec extends FlatSpec with Matchers with MockFactory {
 
   it should "return summary for a specific account" in {
 
-    client
-      .mock
-      .expects(client.baseRequest.withUri(client.baseRestUri.withPath(client.basePath / "accounts" / "12345-6789" / "summary")))
+    client.mock
+      .expects(
+        client.baseRequest.withUri(client.baseRestUri.withPath(client.basePath / "accounts" / "12345-6789" / "summary"))
+      )
       .returning(
         Future.successful(
           HttpResponse(
@@ -809,15 +832,16 @@ class OandaApiClientSpec extends FlatSpec with Matchers with MockFactory {
 
   it should "return instrument details for account" in {
 
-    client
-      .mock
+    client.mock
       .expects(
         client.baseRequest.withUri(
-          client.baseRestUri.withPath(
-            client.basePath / "accounts" / "12345-6789" / "instruments"
-          ).withQuery(
-            Query("instruments" -> "EUR_USD")
-          )
+          client.baseRestUri
+            .withPath(
+              client.basePath / "accounts" / "12345-6789" / "instruments"
+            )
+            .withQuery(
+              Query("instruments" -> "EUR_USD")
+            )
         )
       )
       .returning(
@@ -879,8 +903,7 @@ class OandaApiClientSpec extends FlatSpec with Matchers with MockFactory {
 
   it should "successfully configure account margin rate and set new alias" in {
 
-    client
-      .mock
+    client.mock
       .expects(
         client.baseRequest
           .withMethod(PATCH)
@@ -945,8 +968,7 @@ class OandaApiClientSpec extends FlatSpec with Matchers with MockFactory {
 
   it should "fail configuring account if marginRate is set too high" in {
 
-    client
-      .mock
+    client.mock
       .expects(
         client.baseRequest
           .withMethod(PATCH)
@@ -1004,7 +1026,7 @@ class OandaApiClientSpec extends FlatSpec with Matchers with MockFactory {
               375,
               CLIENT_CONFIGURE_REJECT,
               None,
-              1.0E13,
+              1.0e13,
               Some(MARGIN_RATE_WOULD_TRIGGER_CLOSEOUT)
             )
           ),
@@ -1018,15 +1040,16 @@ class OandaApiClientSpec extends FlatSpec with Matchers with MockFactory {
 
   it should "retrieve account changes since transaction" in {
 
-    client
-      .mock
+    client.mock
       .expects(
         client.baseRequest.withUri(
-          client.baseRestUri.withPath(
-            client.basePath / "accounts" / "12345-6789" / "changes"
-          ).withQuery(
-            Query("sinceTransactionID" -> "360")
-          )
+          client.baseRestUri
+            .withPath(
+              client.basePath / "accounts" / "12345-6789" / "changes"
+            )
+            .withQuery(
+              Query("sinceTransactionID" -> "360")
+            )
         )
       )
       .returning(
@@ -1858,7 +1881,8 @@ class OandaApiClientSpec extends FlatSpec with Matchers with MockFactory {
                 None,
                 None,
                 None,
-                None),
+                None
+              ),
               OrderCancelTransaction(
                 367,
                 Instant.parse("2017-03-01T08:41:06.870753569Z"),
@@ -1991,7 +2015,7 @@ class OandaApiClientSpec extends FlatSpec with Matchers with MockFactory {
                 374,
                 CLIENT_CONFIGURE_REJECT,
                 None,
-                1.0E13,
+                1.0e13,
                 Some(MARGIN_RATE_WOULD_TRIGGER_CLOSEOUT)
               ),
               ClientConfigureRejectTransaction(
@@ -2002,7 +2026,7 @@ class OandaApiClientSpec extends FlatSpec with Matchers with MockFactory {
                 375,
                 CLIENT_CONFIGURE_REJECT,
                 None,
-                1.0E13,
+                1.0e13,
                 Some(MARGIN_RATE_WOULD_TRIGGER_CLOSEOUT)
               ),
               OrderFillTransaction(

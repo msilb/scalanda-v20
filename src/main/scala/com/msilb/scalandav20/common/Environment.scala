@@ -9,12 +9,12 @@ sealed trait Environment {
 object Environment {
 
   case object Practice extends Environment {
-    val restApiUrl = "api-fxpractice.oanda.com"
+    val restApiUrl   = "api-fxpractice.oanda.com"
     val streamApiUrl = "stream-fxpractice.oanda.com"
   }
 
   case object Production extends Environment {
-    val restApiUrl = "api-fxtrade.oanda.com"
+    val restApiUrl   = "api-fxtrade.oanda.com"
     val streamApiUrl = "stream-fxtrade.oanda.com"
   }
 

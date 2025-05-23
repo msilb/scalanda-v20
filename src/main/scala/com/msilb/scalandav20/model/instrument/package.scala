@@ -85,12 +85,14 @@ package object instrument {
   }
 
   @JsonCodec
-  case class Candlestick(time: Instant,
-                         bid: Option[CandlestickData],
-                         ask: Option[CandlestickData],
-                         mid: Option[CandlestickData],
-                         volume: Option[Int],
-                         complete: Boolean)
+  case class Candlestick(
+    time: Instant,
+    bid: Option[CandlestickData],
+    ask: Option[CandlestickData],
+    mid: Option[CandlestickData],
+    volume: Option[Int],
+    complete: Boolean
+  )
 
   @JsonCodec
   case class CandlestickData(o: PriceValue, h: PriceValue, l: PriceValue, c: PriceValue)
