@@ -18,16 +18,15 @@ import io.circe.java8.time._
 package object transactions {
 
   type TransactionID = Long
-  type ClientID = String
-  type ClientTag = String
+  type ClientID      = String
+  type ClientTag     = String
   type ClientComment = String
 
   sealed trait TransactionStreamItem
 
   @JsonCodec
-  case class TransactionHeartbeat(`type`: String,
-                                  lastTransactionID: TransactionID,
-                                  time: Instant) extends TransactionStreamItem
+  case class TransactionHeartbeat(`type`: String, lastTransactionID: TransactionID, time: Instant)
+      extends TransactionStreamItem
 
   sealed trait Transaction extends TransactionStreamItem {
     def id: TransactionID
@@ -46,590 +45,658 @@ package object transactions {
   object Transaction {
 
     @JsonCodec
-    case class CreateTransaction(override val id: TransactionID,
-                                 override val time: Instant,
-                                 override val userID: Int,
-                                 override val accountID: AccountID,
-                                 override val batchID: TransactionID,
-                                 override val `type`: TransactionType,
-                                 divisionID: Int,
-                                 siteID: Int,
-                                 accountUserID: Int,
-                                 accountNumber: Int,
-                                 homeCurrency: Currency) extends Transaction
+    case class CreateTransaction(
+      override val id: TransactionID,
+      override val time: Instant,
+      override val userID: Int,
+      override val accountID: AccountID,
+      override val batchID: TransactionID,
+      override val `type`: TransactionType,
+      divisionID: Int,
+      siteID: Int,
+      accountUserID: Int,
+      accountNumber: Int,
+      homeCurrency: Currency
+    ) extends Transaction
 
     @JsonCodec
-    case class CloseTransaction(override val id: TransactionID,
-                                override val time: Instant,
-                                override val userID: Int,
-                                override val accountID: AccountID,
-                                override val batchID: TransactionID,
-                                override val `type`: TransactionType) extends Transaction
+    case class CloseTransaction(
+      override val id: TransactionID,
+      override val time: Instant,
+      override val userID: Int,
+      override val accountID: AccountID,
+      override val batchID: TransactionID,
+      override val `type`: TransactionType
+    ) extends Transaction
 
     @JsonCodec
-    case class ReopenTransaction(override val id: TransactionID,
-                                 override val time: Instant,
-                                 override val userID: Int,
-                                 override val accountID: AccountID,
-                                 override val batchID: TransactionID,
-                                 override val `type`: TransactionType) extends Transaction
+    case class ReopenTransaction(
+      override val id: TransactionID,
+      override val time: Instant,
+      override val userID: Int,
+      override val accountID: AccountID,
+      override val batchID: TransactionID,
+      override val `type`: TransactionType
+    ) extends Transaction
 
     @JsonCodec
-    case class ClientConfigureTransaction(override val id: TransactionID,
-                                          override val time: Instant,
-                                          override val userID: Int,
-                                          override val accountID: AccountID,
-                                          override val batchID: TransactionID,
-                                          override val `type`: TransactionType,
-                                          alias: Option[String],
-                                          marginRate: DecimalNumber) extends Transaction
+    case class ClientConfigureTransaction(
+      override val id: TransactionID,
+      override val time: Instant,
+      override val userID: Int,
+      override val accountID: AccountID,
+      override val batchID: TransactionID,
+      override val `type`: TransactionType,
+      alias: Option[String],
+      marginRate: DecimalNumber
+    ) extends Transaction
 
     @JsonCodec
-    case class ClientConfigureRejectTransaction(override val id: TransactionID,
-                                                override val time: Instant,
-                                                override val userID: Int,
-                                                override val accountID: AccountID,
-                                                override val batchID: TransactionID,
-                                                override val `type`: TransactionType,
-                                                alias: Option[String],
-                                                marginRate: DecimalNumber,
-                                                rejectReason: Option[TransactionRejectReason]) extends Transaction
+    case class ClientConfigureRejectTransaction(
+      override val id: TransactionID,
+      override val time: Instant,
+      override val userID: Int,
+      override val accountID: AccountID,
+      override val batchID: TransactionID,
+      override val `type`: TransactionType,
+      alias: Option[String],
+      marginRate: DecimalNumber,
+      rejectReason: Option[TransactionRejectReason]
+    ) extends Transaction
 
     @JsonCodec
-    case class TransferFundsTransaction(override val id: TransactionID,
-                                        override val time: Instant,
-                                        override val userID: Int,
-                                        override val accountID: AccountID,
-                                        override val batchID: TransactionID,
-                                        override val `type`: TransactionType,
-                                        amount: AccountUnits,
-                                        fundingReason: Option[FundingReason],
-                                        accountBalance: AccountUnits) extends Transaction
+    case class TransferFundsTransaction(
+      override val id: TransactionID,
+      override val time: Instant,
+      override val userID: Int,
+      override val accountID: AccountID,
+      override val batchID: TransactionID,
+      override val `type`: TransactionType,
+      amount: AccountUnits,
+      fundingReason: Option[FundingReason],
+      accountBalance: AccountUnits
+    ) extends Transaction
 
     @JsonCodec
-    case class TransferFundsRejectTransaction(override val id: TransactionID,
-                                              override val time: Instant,
-                                              override val userID: Int,
-                                              override val accountID: AccountID,
-                                              override val batchID: TransactionID,
-                                              override val `type`: TransactionType,
-                                              amount: AccountUnits,
-                                              fundingReason: Option[FundingReason],
-                                              rejectReason: Option[TransactionRejectReason]) extends Transaction
+    case class TransferFundsRejectTransaction(
+      override val id: TransactionID,
+      override val time: Instant,
+      override val userID: Int,
+      override val accountID: AccountID,
+      override val batchID: TransactionID,
+      override val `type`: TransactionType,
+      amount: AccountUnits,
+      fundingReason: Option[FundingReason],
+      rejectReason: Option[TransactionRejectReason]
+    ) extends Transaction
 
     @JsonCodec
-    case class MarketOrderTransaction(override val id: TransactionID,
-                                      override val time: Instant,
-                                      override val userID: Int,
-                                      override val accountID: AccountID,
-                                      override val batchID: TransactionID,
-                                      override val `type`: TransactionType,
-                                      instrument: InstrumentName,
-                                      units: DecimalNumber,
-                                      timeInForce: TimeInForce,
-                                      priceBound: Option[PriceValue],
-                                      positionFill: OrderPositionFill,
-                                      tradeClose: Option[MarketOrderTradeClose],
-                                      longPositionCloseout: Option[MarketOrderPositionCloseout],
-                                      shortPositionCloseout: Option[MarketOrderPositionCloseout],
-                                      marginCloseout: Option[MarketOrderMarginCloseout],
-                                      delayedTradeClose: Option[MarketOrderDelayedTradeClose],
-                                      reason: Option[MarketOrderReason],
-                                      clientExtensions: Option[ClientExtensions],
-                                      takeProfitOnFill: Option[TakeProfitDetails],
-                                      stopLossOnFill: Option[StopLossDetails],
-                                      trailingStopLossOnFill: Option[TrailingStopLossDetails],
-                                      tradeClientExtensions: Option[ClientExtensions]) extends Transaction
+    case class MarketOrderTransaction(
+      override val id: TransactionID,
+      override val time: Instant,
+      override val userID: Int,
+      override val accountID: AccountID,
+      override val batchID: TransactionID,
+      override val `type`: TransactionType,
+      instrument: InstrumentName,
+      units: DecimalNumber,
+      timeInForce: TimeInForce,
+      priceBound: Option[PriceValue],
+      positionFill: OrderPositionFill,
+      tradeClose: Option[MarketOrderTradeClose],
+      longPositionCloseout: Option[MarketOrderPositionCloseout],
+      shortPositionCloseout: Option[MarketOrderPositionCloseout],
+      marginCloseout: Option[MarketOrderMarginCloseout],
+      delayedTradeClose: Option[MarketOrderDelayedTradeClose],
+      reason: Option[MarketOrderReason],
+      clientExtensions: Option[ClientExtensions],
+      takeProfitOnFill: Option[TakeProfitDetails],
+      stopLossOnFill: Option[StopLossDetails],
+      trailingStopLossOnFill: Option[TrailingStopLossDetails],
+      tradeClientExtensions: Option[ClientExtensions]
+    ) extends Transaction
 
     @JsonCodec
-    case class MarketOrderRejectTransaction(override val id: TransactionID,
-                                            override val time: Instant,
-                                            override val userID: Int,
-                                            override val accountID: AccountID,
-                                            override val batchID: TransactionID,
-                                            override val `type`: TransactionType,
-                                            instrument: Option[InstrumentName],
-                                            units: Option[DecimalNumber],
-                                            timeInForce: TimeInForce,
-                                            priceBound: Option[PriceValue],
-                                            positionFill: OrderPositionFill,
-                                            tradeClose: Option[MarketOrderTradeClose],
-                                            longPositionCloseout: Option[MarketOrderPositionCloseout],
-                                            shortPositionCloseout: Option[MarketOrderPositionCloseout],
-                                            marginCloseout: Option[MarketOrderMarginCloseout],
-                                            delayedTradeClose: Option[MarketOrderDelayedTradeClose],
-                                            reason: Option[MarketOrderReason],
-                                            clientExtensions: Option[ClientExtensions],
-                                            takeProfitOnFill: Option[TakeProfitDetails],
-                                            stopLossOnFill: Option[StopLossDetails],
-                                            trailingStopLossOnFill: Option[TrailingStopLossDetails],
-                                            tradeClientExtensions: Option[ClientExtensions],
-                                            rejectReason: Option[TransactionRejectReason]) extends Transaction
+    case class MarketOrderRejectTransaction(
+      override val id: TransactionID,
+      override val time: Instant,
+      override val userID: Int,
+      override val accountID: AccountID,
+      override val batchID: TransactionID,
+      override val `type`: TransactionType,
+      instrument: Option[InstrumentName],
+      units: Option[DecimalNumber],
+      timeInForce: TimeInForce,
+      priceBound: Option[PriceValue],
+      positionFill: OrderPositionFill,
+      tradeClose: Option[MarketOrderTradeClose],
+      longPositionCloseout: Option[MarketOrderPositionCloseout],
+      shortPositionCloseout: Option[MarketOrderPositionCloseout],
+      marginCloseout: Option[MarketOrderMarginCloseout],
+      delayedTradeClose: Option[MarketOrderDelayedTradeClose],
+      reason: Option[MarketOrderReason],
+      clientExtensions: Option[ClientExtensions],
+      takeProfitOnFill: Option[TakeProfitDetails],
+      stopLossOnFill: Option[StopLossDetails],
+      trailingStopLossOnFill: Option[TrailingStopLossDetails],
+      tradeClientExtensions: Option[ClientExtensions],
+      rejectReason: Option[TransactionRejectReason]
+    ) extends Transaction
 
     @JsonCodec
-    case class LimitOrderTransaction(override val id: TransactionID,
-                                     override val time: Instant,
-                                     override val userID: Int,
-                                     override val accountID: AccountID,
-                                     override val batchID: TransactionID,
-                                     override val `type`: TransactionType,
-                                     instrument: InstrumentName,
-                                     units: DecimalNumber,
-                                     price: PriceValue,
-                                     timeInForce: TimeInForce,
-                                     gtdTime: Option[Instant],
-                                     positionFill: OrderPositionFill,
-                                     reason: Option[LimitOrderReason],
-                                     clientExtensions: Option[ClientExtensions],
-                                     takeProfitOnFill: Option[TakeProfitDetails],
-                                     stopLossOnFill: Option[StopLossDetails],
-                                     trailingStopLossOnFill: Option[TrailingStopLossDetails],
-                                     tradeClientExtensions: Option[ClientExtensions],
-                                     replacesOrderID: Option[OrderID],
-                                     replacedOrderCancelTransactionID: Option[TransactionID]) extends Transaction
+    case class LimitOrderTransaction(
+      override val id: TransactionID,
+      override val time: Instant,
+      override val userID: Int,
+      override val accountID: AccountID,
+      override val batchID: TransactionID,
+      override val `type`: TransactionType,
+      instrument: InstrumentName,
+      units: DecimalNumber,
+      price: PriceValue,
+      timeInForce: TimeInForce,
+      gtdTime: Option[Instant],
+      positionFill: OrderPositionFill,
+      reason: Option[LimitOrderReason],
+      clientExtensions: Option[ClientExtensions],
+      takeProfitOnFill: Option[TakeProfitDetails],
+      stopLossOnFill: Option[StopLossDetails],
+      trailingStopLossOnFill: Option[TrailingStopLossDetails],
+      tradeClientExtensions: Option[ClientExtensions],
+      replacesOrderID: Option[OrderID],
+      replacedOrderCancelTransactionID: Option[TransactionID]
+    ) extends Transaction
 
     @JsonCodec
-    case class LimitOrderRejectTransaction(override val id: TransactionID,
-                                           override val time: Instant,
-                                           override val userID: Int,
-                                           override val accountID: AccountID,
-                                           override val batchID: TransactionID,
-                                           override val `type`: TransactionType,
-                                           instrument: InstrumentName,
-                                           units: DecimalNumber,
-                                           price: PriceValue,
-                                           timeInForce: TimeInForce,
-                                           gtdTime: Option[Instant],
-                                           positionFill: OrderPositionFill,
-                                           reason: Option[LimitOrderReason],
-                                           clientExtensions: Option[ClientExtensions],
-                                           takeProfitOnFill: Option[TakeProfitDetails],
-                                           stopLossOnFill: Option[StopLossDetails],
-                                           trailingStopLossOnFill: Option[TrailingStopLossDetails],
-                                           tradeClientExtensions: Option[ClientExtensions],
-                                           intendedReplacesOrderID: Option[OrderID],
-                                           rejectReason: Option[TransactionRejectReason]) extends Transaction
+    case class LimitOrderRejectTransaction(
+      override val id: TransactionID,
+      override val time: Instant,
+      override val userID: Int,
+      override val accountID: AccountID,
+      override val batchID: TransactionID,
+      override val `type`: TransactionType,
+      instrument: InstrumentName,
+      units: DecimalNumber,
+      price: PriceValue,
+      timeInForce: TimeInForce,
+      gtdTime: Option[Instant],
+      positionFill: OrderPositionFill,
+      reason: Option[LimitOrderReason],
+      clientExtensions: Option[ClientExtensions],
+      takeProfitOnFill: Option[TakeProfitDetails],
+      stopLossOnFill: Option[StopLossDetails],
+      trailingStopLossOnFill: Option[TrailingStopLossDetails],
+      tradeClientExtensions: Option[ClientExtensions],
+      intendedReplacesOrderID: Option[OrderID],
+      rejectReason: Option[TransactionRejectReason]
+    ) extends Transaction
 
     @JsonCodec
-    case class StopOrderTransaction(override val id: TransactionID,
-                                    override val time: Instant,
-                                    override val userID: Int,
-                                    override val accountID: AccountID,
-                                    override val batchID: TransactionID,
-                                    override val `type`: TransactionType,
-                                    instrument: InstrumentName,
-                                    units: DecimalNumber,
-                                    price: PriceValue,
-                                    priceBound: Option[PriceValue],
-                                    timeInForce: TimeInForce,
-                                    gtdTime: Option[Instant],
-                                    positionFill: OrderPositionFill,
-                                    reason: Option[StopOrderReason],
-                                    clientExtensions: Option[ClientExtensions],
-                                    takeProfitOnFill: Option[TakeProfitDetails],
-                                    stopLossOnFill: Option[StopLossDetails],
-                                    trailingStopLossOnFill: Option[TrailingStopLossDetails],
-                                    tradeClientExtensions: Option[ClientExtensions],
-                                    replacesOrderID: Option[OrderID],
-                                    replacedOrderCancelTransactionID: Option[TransactionID]) extends Transaction
+    case class StopOrderTransaction(
+      override val id: TransactionID,
+      override val time: Instant,
+      override val userID: Int,
+      override val accountID: AccountID,
+      override val batchID: TransactionID,
+      override val `type`: TransactionType,
+      instrument: InstrumentName,
+      units: DecimalNumber,
+      price: PriceValue,
+      priceBound: Option[PriceValue],
+      timeInForce: TimeInForce,
+      gtdTime: Option[Instant],
+      positionFill: OrderPositionFill,
+      reason: Option[StopOrderReason],
+      clientExtensions: Option[ClientExtensions],
+      takeProfitOnFill: Option[TakeProfitDetails],
+      stopLossOnFill: Option[StopLossDetails],
+      trailingStopLossOnFill: Option[TrailingStopLossDetails],
+      tradeClientExtensions: Option[ClientExtensions],
+      replacesOrderID: Option[OrderID],
+      replacedOrderCancelTransactionID: Option[TransactionID]
+    ) extends Transaction
 
     @JsonCodec
-    case class StopOrderRejectTransaction(override val id: TransactionID,
-                                          override val time: Instant,
-                                          override val userID: Int,
-                                          override val accountID: AccountID,
-                                          override val batchID: TransactionID,
-                                          override val `type`: TransactionType,
-                                          instrument: InstrumentName,
-                                          units: DecimalNumber,
-                                          price: PriceValue,
-                                          priceBound: Option[PriceValue],
-                                          timeInForce: TimeInForce,
-                                          gtdTime: Option[Instant],
-                                          positionFill: OrderPositionFill,
-                                          reason: Option[StopOrderReason],
-                                          clientExtensions: Option[ClientExtensions],
-                                          takeProfitOnFill: Option[TakeProfitDetails],
-                                          stopLossOnFill: Option[StopLossDetails],
-                                          trailingStopLossOnFill: Option[TrailingStopLossDetails],
-                                          tradeClientExtensions: Option[ClientExtensions],
-                                          intendedReplacesOrderID: Option[OrderID],
-                                          rejectReason: Option[TransactionRejectReason]) extends Transaction
+    case class StopOrderRejectTransaction(
+      override val id: TransactionID,
+      override val time: Instant,
+      override val userID: Int,
+      override val accountID: AccountID,
+      override val batchID: TransactionID,
+      override val `type`: TransactionType,
+      instrument: InstrumentName,
+      units: DecimalNumber,
+      price: PriceValue,
+      priceBound: Option[PriceValue],
+      timeInForce: TimeInForce,
+      gtdTime: Option[Instant],
+      positionFill: OrderPositionFill,
+      reason: Option[StopOrderReason],
+      clientExtensions: Option[ClientExtensions],
+      takeProfitOnFill: Option[TakeProfitDetails],
+      stopLossOnFill: Option[StopLossDetails],
+      trailingStopLossOnFill: Option[TrailingStopLossDetails],
+      tradeClientExtensions: Option[ClientExtensions],
+      intendedReplacesOrderID: Option[OrderID],
+      rejectReason: Option[TransactionRejectReason]
+    ) extends Transaction
 
     @JsonCodec
-    case class MarketIfTouchedOrderTransaction(override val id: TransactionID,
-                                               override val time: Instant,
-                                               override val userID: Int,
-                                               override val accountID: AccountID,
-                                               override val batchID: TransactionID,
-                                               override val `type`: TransactionType,
-                                               instrument: InstrumentName,
-                                               units: DecimalNumber,
-                                               price: PriceValue,
-                                               priceBound: Option[PriceValue],
-                                               timeInForce: TimeInForce,
-                                               gtdTime: Option[Instant],
-                                               positionFill: OrderPositionFill,
-                                               reason: Option[MarketIfTouchedOrderReason],
-                                               clientExtensions: Option[ClientExtensions],
-                                               takeProfitOnFill: Option[TakeProfitDetails],
-                                               stopLossOnFill: Option[StopLossDetails],
-                                               trailingStopLossOnFill: Option[TrailingStopLossDetails],
-                                               tradeClientExtensions: Option[ClientExtensions],
-                                               replacesOrderID: Option[OrderID],
-                                               replacedOrderCancelTransactionID: Option[TransactionID]) extends Transaction
+    case class MarketIfTouchedOrderTransaction(
+      override val id: TransactionID,
+      override val time: Instant,
+      override val userID: Int,
+      override val accountID: AccountID,
+      override val batchID: TransactionID,
+      override val `type`: TransactionType,
+      instrument: InstrumentName,
+      units: DecimalNumber,
+      price: PriceValue,
+      priceBound: Option[PriceValue],
+      timeInForce: TimeInForce,
+      gtdTime: Option[Instant],
+      positionFill: OrderPositionFill,
+      reason: Option[MarketIfTouchedOrderReason],
+      clientExtensions: Option[ClientExtensions],
+      takeProfitOnFill: Option[TakeProfitDetails],
+      stopLossOnFill: Option[StopLossDetails],
+      trailingStopLossOnFill: Option[TrailingStopLossDetails],
+      tradeClientExtensions: Option[ClientExtensions],
+      replacesOrderID: Option[OrderID],
+      replacedOrderCancelTransactionID: Option[TransactionID]
+    ) extends Transaction
 
     @JsonCodec
-    case class MarketIfTouchedOrderRejectTransaction(override val id: TransactionID,
-                                                     override val time: Instant,
-                                                     override val userID: Int,
-                                                     override val accountID: AccountID,
-                                                     override val batchID: TransactionID,
-                                                     override val `type`: TransactionType,
-                                                     instrument: InstrumentName,
-                                                     units: DecimalNumber,
-                                                     price: PriceValue,
-                                                     priceBound: Option[PriceValue],
-                                                     timeInForce: TimeInForce,
-                                                     gtdTime: Option[Instant],
-                                                     positionFill: OrderPositionFill,
-                                                     reason: Option[MarketIfTouchedOrderReason],
-                                                     clientExtensions: Option[ClientExtensions],
-                                                     takeProfitOnFill: Option[TakeProfitDetails],
-                                                     stopLossOnFill: Option[StopLossDetails],
-                                                     trailingStopLossOnFill: Option[TrailingStopLossDetails],
-                                                     tradeClientExtensions: Option[ClientExtensions],
-                                                     intendedReplacesOrderID: Option[OrderID],
-                                                     rejectReason: Option[TransactionRejectReason]) extends Transaction
+    case class MarketIfTouchedOrderRejectTransaction(
+      override val id: TransactionID,
+      override val time: Instant,
+      override val userID: Int,
+      override val accountID: AccountID,
+      override val batchID: TransactionID,
+      override val `type`: TransactionType,
+      instrument: InstrumentName,
+      units: DecimalNumber,
+      price: PriceValue,
+      priceBound: Option[PriceValue],
+      timeInForce: TimeInForce,
+      gtdTime: Option[Instant],
+      positionFill: OrderPositionFill,
+      reason: Option[MarketIfTouchedOrderReason],
+      clientExtensions: Option[ClientExtensions],
+      takeProfitOnFill: Option[TakeProfitDetails],
+      stopLossOnFill: Option[StopLossDetails],
+      trailingStopLossOnFill: Option[TrailingStopLossDetails],
+      tradeClientExtensions: Option[ClientExtensions],
+      intendedReplacesOrderID: Option[OrderID],
+      rejectReason: Option[TransactionRejectReason]
+    ) extends Transaction
 
     @JsonCodec
-    case class TakeProfitOrderTransaction(override val id: TransactionID,
-                                          override val time: Instant,
-                                          override val userID: Int,
-                                          override val accountID: AccountID,
-                                          override val batchID: TransactionID,
-                                          override val `type`: TransactionType,
-                                          tradeID: TradeID,
-                                          clientTradeID: Option[ClientID],
-                                          price: PriceValue,
-                                          timeInForce: TimeInForce,
-                                          gtdTime: Option[Instant],
-                                          reason: Option[TakeProfitOrderReason],
-                                          clientExtensions: Option[ClientExtensions],
-                                          orderFillTransactionID: Option[TransactionID],
-                                          replacesOrderID: Option[OrderID],
-                                          replacedOrderCancelTransactionID: Option[TransactionID]) extends Transaction
+    case class TakeProfitOrderTransaction(
+      override val id: TransactionID,
+      override val time: Instant,
+      override val userID: Int,
+      override val accountID: AccountID,
+      override val batchID: TransactionID,
+      override val `type`: TransactionType,
+      tradeID: TradeID,
+      clientTradeID: Option[ClientID],
+      price: PriceValue,
+      timeInForce: TimeInForce,
+      gtdTime: Option[Instant],
+      reason: Option[TakeProfitOrderReason],
+      clientExtensions: Option[ClientExtensions],
+      orderFillTransactionID: Option[TransactionID],
+      replacesOrderID: Option[OrderID],
+      replacedOrderCancelTransactionID: Option[TransactionID]
+    ) extends Transaction
 
     @JsonCodec
-    case class TakeProfitOrderRejectTransaction(override val id: TransactionID,
-                                                override val time: Instant,
-                                                override val userID: Int,
-                                                override val accountID: AccountID,
-                                                override val batchID: TransactionID,
-                                                override val `type`: TransactionType,
-                                                tradeID: TradeID,
-                                                clientTradeID: Option[ClientID],
-                                                price: PriceValue,
-                                                timeInForce: TimeInForce,
-                                                gtdTime: Option[Instant],
-                                                reason: Option[TakeProfitOrderReason],
-                                                clientExtensions: Option[ClientExtensions],
-                                                orderFillTransactionID: Option[TransactionID],
-                                                intendedReplacesOrderID: Option[OrderID],
-                                                rejectReason: Option[TransactionRejectReason]) extends Transaction
+    case class TakeProfitOrderRejectTransaction(
+      override val id: TransactionID,
+      override val time: Instant,
+      override val userID: Int,
+      override val accountID: AccountID,
+      override val batchID: TransactionID,
+      override val `type`: TransactionType,
+      tradeID: TradeID,
+      clientTradeID: Option[ClientID],
+      price: PriceValue,
+      timeInForce: TimeInForce,
+      gtdTime: Option[Instant],
+      reason: Option[TakeProfitOrderReason],
+      clientExtensions: Option[ClientExtensions],
+      orderFillTransactionID: Option[TransactionID],
+      intendedReplacesOrderID: Option[OrderID],
+      rejectReason: Option[TransactionRejectReason]
+    ) extends Transaction
 
     @JsonCodec
-    case class StopLossOrderTransaction(override val id: TransactionID,
-                                        override val time: Instant,
-                                        override val userID: Int,
-                                        override val accountID: AccountID,
-                                        override val batchID: TransactionID,
-                                        override val `type`: TransactionType,
-                                        tradeID: TradeID,
-                                        clientTradeID: Option[ClientID],
-                                        price: PriceValue,
-                                        timeInForce: TimeInForce,
-                                        gtdTime: Option[Instant],
-                                        reason: Option[StopLossOrderReason],
-                                        clientExtensions: Option[ClientExtensions],
-                                        orderFillTransactionID: Option[TransactionID],
-                                        replacesOrderID: Option[OrderID],
-                                        replacedOrderCancelTransactionID: Option[TransactionID]) extends Transaction
+    case class StopLossOrderTransaction(
+      override val id: TransactionID,
+      override val time: Instant,
+      override val userID: Int,
+      override val accountID: AccountID,
+      override val batchID: TransactionID,
+      override val `type`: TransactionType,
+      tradeID: TradeID,
+      clientTradeID: Option[ClientID],
+      price: PriceValue,
+      timeInForce: TimeInForce,
+      gtdTime: Option[Instant],
+      reason: Option[StopLossOrderReason],
+      clientExtensions: Option[ClientExtensions],
+      orderFillTransactionID: Option[TransactionID],
+      replacesOrderID: Option[OrderID],
+      replacedOrderCancelTransactionID: Option[TransactionID]
+    ) extends Transaction
 
     @JsonCodec
-    case class StopLossOrderRejectTransaction(override val id: TransactionID,
-                                              override val time: Instant,
-                                              override val userID: Int,
-                                              override val accountID: AccountID,
-                                              override val batchID: TransactionID,
-                                              override val `type`: TransactionType,
-                                              tradeID: TradeID,
-                                              clientTradeID: Option[ClientID],
-                                              price: PriceValue,
-                                              timeInForce: TimeInForce,
-                                              gtdTime: Option[Instant],
-                                              reason: Option[StopLossOrderReason],
-                                              clientExtensions: Option[ClientExtensions],
-                                              orderFillTransactionID: Option[TransactionID],
-                                              intendedReplacesOrderID: Option[OrderID],
-                                              rejectReason: Option[TransactionRejectReason]) extends Transaction
+    case class StopLossOrderRejectTransaction(
+      override val id: TransactionID,
+      override val time: Instant,
+      override val userID: Int,
+      override val accountID: AccountID,
+      override val batchID: TransactionID,
+      override val `type`: TransactionType,
+      tradeID: TradeID,
+      clientTradeID: Option[ClientID],
+      price: PriceValue,
+      timeInForce: TimeInForce,
+      gtdTime: Option[Instant],
+      reason: Option[StopLossOrderReason],
+      clientExtensions: Option[ClientExtensions],
+      orderFillTransactionID: Option[TransactionID],
+      intendedReplacesOrderID: Option[OrderID],
+      rejectReason: Option[TransactionRejectReason]
+    ) extends Transaction
 
     @JsonCodec
-    case class TrailingStopLossOrderTransaction(override val id: TransactionID,
-                                                override val time: Instant,
-                                                override val userID: Int,
-                                                override val accountID: AccountID,
-                                                override val batchID: TransactionID,
-                                                override val `type`: TransactionType,
-                                                tradeID: TradeID,
-                                                clientTradeID: Option[ClientID],
-                                                distance: PriceValue,
-                                                timeInForce: TimeInForce,
-                                                gtdTime: Option[Instant],
-                                                reason: Option[TrailingStopLossOrderReason],
-                                                clientExtensions: Option[ClientExtensions],
-                                                orderFillTransactionID: Option[TransactionID],
-                                                replacesOrderID: Option[OrderID],
-                                                replacedOrderCancelTransactionID: Option[TransactionID]) extends Transaction
+    case class TrailingStopLossOrderTransaction(
+      override val id: TransactionID,
+      override val time: Instant,
+      override val userID: Int,
+      override val accountID: AccountID,
+      override val batchID: TransactionID,
+      override val `type`: TransactionType,
+      tradeID: TradeID,
+      clientTradeID: Option[ClientID],
+      distance: PriceValue,
+      timeInForce: TimeInForce,
+      gtdTime: Option[Instant],
+      reason: Option[TrailingStopLossOrderReason],
+      clientExtensions: Option[ClientExtensions],
+      orderFillTransactionID: Option[TransactionID],
+      replacesOrderID: Option[OrderID],
+      replacedOrderCancelTransactionID: Option[TransactionID]
+    ) extends Transaction
 
     @JsonCodec
-    case class TrailingStopLossOrderRejectTransaction(override val id: TransactionID,
-                                                      override val time: Instant,
-                                                      override val userID: Int,
-                                                      override val accountID: AccountID,
-                                                      override val batchID: TransactionID,
-                                                      override val `type`: TransactionType,
-                                                      tradeID: TradeID,
-                                                      clientTradeID: Option[ClientID],
-                                                      distance: PriceValue,
-                                                      timeInForce: TimeInForce,
-                                                      gtdTime: Option[Instant],
-                                                      reason: Option[TrailingStopLossOrderReason],
-                                                      clientExtensions: Option[ClientExtensions],
-                                                      orderFillTransactionID: Option[TransactionID],
-                                                      intendedReplacesOrderID: Option[OrderID],
-                                                      rejectReason: Option[TransactionRejectReason]) extends Transaction
+    case class TrailingStopLossOrderRejectTransaction(
+      override val id: TransactionID,
+      override val time: Instant,
+      override val userID: Int,
+      override val accountID: AccountID,
+      override val batchID: TransactionID,
+      override val `type`: TransactionType,
+      tradeID: TradeID,
+      clientTradeID: Option[ClientID],
+      distance: PriceValue,
+      timeInForce: TimeInForce,
+      gtdTime: Option[Instant],
+      reason: Option[TrailingStopLossOrderReason],
+      clientExtensions: Option[ClientExtensions],
+      orderFillTransactionID: Option[TransactionID],
+      intendedReplacesOrderID: Option[OrderID],
+      rejectReason: Option[TransactionRejectReason]
+    ) extends Transaction
 
     @JsonCodec
-    case class OrderFillTransaction(override val id: TransactionID,
-                                    override val time: Instant,
-                                    override val userID: Int,
-                                    override val accountID: AccountID,
-                                    override val batchID: TransactionID,
-                                    override val `type`: TransactionType,
-                                    orderID: OrderID,
-                                    clientOrderID: Option[ClientID],
-                                    instrument: InstrumentName,
-                                    units: DecimalNumber,
-                                    price: PriceValue,
-                                    reason: Option[OrderFillReason],
-                                    pl: AccountUnits,
-                                    financing: AccountUnits,
-                                    accountBalance: AccountUnits,
-                                    tradeOpened: Option[TradeOpen],
-                                    tradesClosed: Option[Seq[TradeReduce]],
-                                    tradeReduced: Option[TradeReduce]) extends Transaction
+    case class OrderFillTransaction(
+      override val id: TransactionID,
+      override val time: Instant,
+      override val userID: Int,
+      override val accountID: AccountID,
+      override val batchID: TransactionID,
+      override val `type`: TransactionType,
+      orderID: OrderID,
+      clientOrderID: Option[ClientID],
+      instrument: InstrumentName,
+      units: DecimalNumber,
+      price: PriceValue,
+      reason: Option[OrderFillReason],
+      pl: AccountUnits,
+      financing: AccountUnits,
+      accountBalance: AccountUnits,
+      tradeOpened: Option[TradeOpen],
+      tradesClosed: Option[Seq[TradeReduce]],
+      tradeReduced: Option[TradeReduce]
+    ) extends Transaction
 
     @JsonCodec
-    case class OrderCancelTransaction(override val id: TransactionID,
-                                      override val time: Instant,
-                                      override val userID: Int,
-                                      override val accountID: AccountID,
-                                      override val batchID: TransactionID,
-                                      override val `type`: TransactionType,
-                                      orderID: OrderID,
-                                      clientOrderID: Option[ClientID],
-                                      reason: Option[OrderCancelReason],
-                                      replacedByOrderID: Option[OrderID]) extends Transaction
+    case class OrderCancelTransaction(
+      override val id: TransactionID,
+      override val time: Instant,
+      override val userID: Int,
+      override val accountID: AccountID,
+      override val batchID: TransactionID,
+      override val `type`: TransactionType,
+      orderID: OrderID,
+      clientOrderID: Option[ClientID],
+      reason: Option[OrderCancelReason],
+      replacedByOrderID: Option[OrderID]
+    ) extends Transaction
 
     @JsonCodec
-    case class OrderCancelRejectTransaction(override val id: TransactionID,
-                                            override val time: Instant,
-                                            override val userID: Int,
-                                            override val accountID: AccountID,
-                                            override val batchID: TransactionID,
-                                            override val `type`: TransactionType,
-                                            orderID: OrderID,
-                                            clientOrderID: Option[ClientID],
-                                            reason: Option[OrderCancelReason],
-                                            rejectReason: Option[TransactionRejectReason]) extends Transaction
+    case class OrderCancelRejectTransaction(
+      override val id: TransactionID,
+      override val time: Instant,
+      override val userID: Int,
+      override val accountID: AccountID,
+      override val batchID: TransactionID,
+      override val `type`: TransactionType,
+      orderID: OrderID,
+      clientOrderID: Option[ClientID],
+      reason: Option[OrderCancelReason],
+      rejectReason: Option[TransactionRejectReason]
+    ) extends Transaction
 
     @JsonCodec
-    case class OrderClientExtensionsModifyTransaction(override val id: TransactionID,
-                                                      override val time: Instant,
-                                                      override val userID: Int,
-                                                      override val accountID: AccountID,
-                                                      override val batchID: TransactionID,
-                                                      override val `type`: TransactionType,
-                                                      orderID: OrderID,
-                                                      clientOrderID: Option[ClientID],
-                                                      orderClientExtensionsModify: Option[ClientExtensions],
-                                                      tradeClientExtensionsModify: Option[ClientExtensions]) extends Transaction
+    case class OrderClientExtensionsModifyTransaction(
+      override val id: TransactionID,
+      override val time: Instant,
+      override val userID: Int,
+      override val accountID: AccountID,
+      override val batchID: TransactionID,
+      override val `type`: TransactionType,
+      orderID: OrderID,
+      clientOrderID: Option[ClientID],
+      orderClientExtensionsModify: Option[ClientExtensions],
+      tradeClientExtensionsModify: Option[ClientExtensions]
+    ) extends Transaction
 
     @JsonCodec
-    case class OrderClientExtensionsModifyRejectTransaction(override val id: TransactionID,
-                                                            override val time: Instant,
-                                                            override val userID: Int,
-                                                            override val accountID: AccountID,
-                                                            override val batchID: TransactionID,
-                                                            override val `type`: TransactionType,
-                                                            orderID: OrderID,
-                                                            clientOrderID: Option[ClientID],
-                                                            orderClientExtensionsModify: Option[ClientExtensions],
-                                                            tradeClientExtensionsModify: Option[ClientExtensions],
-                                                            rejectReason: Option[TransactionRejectReason]) extends Transaction
+    case class OrderClientExtensionsModifyRejectTransaction(
+      override val id: TransactionID,
+      override val time: Instant,
+      override val userID: Int,
+      override val accountID: AccountID,
+      override val batchID: TransactionID,
+      override val `type`: TransactionType,
+      orderID: OrderID,
+      clientOrderID: Option[ClientID],
+      orderClientExtensionsModify: Option[ClientExtensions],
+      tradeClientExtensionsModify: Option[ClientExtensions],
+      rejectReason: Option[TransactionRejectReason]
+    ) extends Transaction
 
     @JsonCodec
-    case class TradeClientExtensionsModifyTransaction(override val id: TransactionID,
-                                                      override val time: Instant,
-                                                      override val userID: Int,
-                                                      override val accountID: AccountID,
-                                                      override val batchID: TransactionID,
-                                                      override val `type`: TransactionType,
-                                                      tradeID: TradeID,
-                                                      clientTradeID: Option[ClientID],
-                                                      tradeClientExtensionsModify: Option[ClientExtensions]) extends Transaction
+    case class TradeClientExtensionsModifyTransaction(
+      override val id: TransactionID,
+      override val time: Instant,
+      override val userID: Int,
+      override val accountID: AccountID,
+      override val batchID: TransactionID,
+      override val `type`: TransactionType,
+      tradeID: TradeID,
+      clientTradeID: Option[ClientID],
+      tradeClientExtensionsModify: Option[ClientExtensions]
+    ) extends Transaction
 
     @JsonCodec
-    case class TradeClientExtensionsModifyRejectTransaction(override val id: TransactionID,
-                                                            override val time: Instant,
-                                                            override val userID: Int,
-                                                            override val accountID: AccountID,
-                                                            override val batchID: TransactionID,
-                                                            override val `type`: TransactionType,
-                                                            tradeID: TradeID,
-                                                            clientTradeID: Option[ClientID],
-                                                            tradeClientExtensionsModify: Option[ClientExtensions],
-                                                            rejectReason: Option[TransactionRejectReason]) extends Transaction
+    case class TradeClientExtensionsModifyRejectTransaction(
+      override val id: TransactionID,
+      override val time: Instant,
+      override val userID: Int,
+      override val accountID: AccountID,
+      override val batchID: TransactionID,
+      override val `type`: TransactionType,
+      tradeID: TradeID,
+      clientTradeID: Option[ClientID],
+      tradeClientExtensionsModify: Option[ClientExtensions],
+      rejectReason: Option[TransactionRejectReason]
+    ) extends Transaction
 
     @JsonCodec
-    case class MarginCallEnterTransaction(override val id: TransactionID,
-                                          override val time: Instant,
-                                          override val userID: Int,
-                                          override val accountID: AccountID,
-                                          override val batchID: TransactionID,
-                                          override val `type`: TransactionType) extends Transaction
+    case class MarginCallEnterTransaction(
+      override val id: TransactionID,
+      override val time: Instant,
+      override val userID: Int,
+      override val accountID: AccountID,
+      override val batchID: TransactionID,
+      override val `type`: TransactionType
+    ) extends Transaction
 
     @JsonCodec
-    case class MarginCallExtendTransaction(override val id: TransactionID,
-                                           override val time: Instant,
-                                           override val userID: Int,
-                                           override val accountID: AccountID,
-                                           override val batchID: TransactionID,
-                                           override val `type`: TransactionType,
-                                           extensionNumber: Int) extends Transaction
+    case class MarginCallExtendTransaction(
+      override val id: TransactionID,
+      override val time: Instant,
+      override val userID: Int,
+      override val accountID: AccountID,
+      override val batchID: TransactionID,
+      override val `type`: TransactionType,
+      extensionNumber: Int
+    ) extends Transaction
 
     @JsonCodec
-    case class MarginCallExitTransaction(override val id: TransactionID,
-                                         override val time: Instant,
-                                         override val userID: Int,
-                                         override val accountID: AccountID,
-                                         override val batchID: TransactionID,
-                                         override val `type`: TransactionType) extends Transaction
+    case class MarginCallExitTransaction(
+      override val id: TransactionID,
+      override val time: Instant,
+      override val userID: Int,
+      override val accountID: AccountID,
+      override val batchID: TransactionID,
+      override val `type`: TransactionType
+    ) extends Transaction
 
     @JsonCodec
-    case class DelayedTradeClosureTransaction(override val id: TransactionID,
-                                              override val time: Instant,
-                                              override val userID: Int,
-                                              override val accountID: AccountID,
-                                              override val batchID: TransactionID,
-                                              override val `type`: TransactionType,
-                                              reason: Option[MarketOrderReason],
-                                              tradeIDs: TradeID) extends Transaction
+    case class DelayedTradeClosureTransaction(
+      override val id: TransactionID,
+      override val time: Instant,
+      override val userID: Int,
+      override val accountID: AccountID,
+      override val batchID: TransactionID,
+      override val `type`: TransactionType,
+      reason: Option[MarketOrderReason],
+      tradeIDs: TradeID
+    ) extends Transaction
 
     @JsonCodec
-    case class DailyFinancingTransaction(override val id: TransactionID,
-                                         override val time: Instant,
-                                         override val userID: Int,
-                                         override val accountID: AccountID,
-                                         override val batchID: TransactionID,
-                                         override val `type`: TransactionType,
-                                         financing: AccountUnits,
-                                         accountBalance: AccountUnits,
-                                         accountFinancingMode: AccountFinancingMode,
-                                         positionFinancings: Seq[PositionFinancing]) extends Transaction
+    case class DailyFinancingTransaction(
+      override val id: TransactionID,
+      override val time: Instant,
+      override val userID: Int,
+      override val accountID: AccountID,
+      override val batchID: TransactionID,
+      override val `type`: TransactionType,
+      financing: AccountUnits,
+      accountBalance: AccountUnits,
+      accountFinancingMode: AccountFinancingMode,
+      positionFinancings: Seq[PositionFinancing]
+    ) extends Transaction
 
     @JsonCodec
-    case class ResetResettablePLTransaction(override val id: TransactionID,
-                                            override val time: Instant,
-                                            override val userID: Int,
-                                            override val accountID: AccountID,
-                                            override val batchID: TransactionID,
-                                            override val `type`: TransactionType) extends Transaction
+    case class ResetResettablePLTransaction(
+      override val id: TransactionID,
+      override val time: Instant,
+      override val userID: Int,
+      override val accountID: AccountID,
+      override val batchID: TransactionID,
+      override val `type`: TransactionType
+    ) extends Transaction
 
     implicit val decodeTransaction: Decoder[Transaction] = Decoder.instance { c =>
       c.downField("type").as[TransactionType].flatMap {
-        case CREATE => c.as[CreateTransaction]
-        case CLOSE => c.as[CloseTransaction]
-        case REOPEN => c.as[ReopenTransaction]
-        case CLIENT_CONFIGURE => c.as[ClientConfigureTransaction]
-        case CLIENT_CONFIGURE_REJECT => c.as[ClientConfigureRejectTransaction]
-        case TRANSFER_FUNDS => c.as[TransferFundsTransaction]
-        case TRANSFER_FUNDS_REJECT => c.as[TransferFundsRejectTransaction]
-        case MARKET_ORDER => c.as[MarketOrderTransaction]
-        case MARKET_ORDER_REJECT => c.as[MarketOrderRejectTransaction]
-        case LIMIT_ORDER => c.as[LimitOrderTransaction]
-        case LIMIT_ORDER_REJECT => c.as[LimitOrderRejectTransaction]
-        case STOP_ORDER => c.as[StopOrderTransaction]
-        case STOP_ORDER_REJECT => c.as[StopOrderRejectTransaction]
-        case MARKET_IF_TOUCHED_ORDER => c.as[MarketIfTouchedOrderTransaction]
-        case MARKET_IF_TOUCHED_ORDER_REJECT => c.as[MarketIfTouchedOrderRejectTransaction]
-        case TAKE_PROFIT_ORDER => c.as[TakeProfitOrderTransaction]
-        case TAKE_PROFIT_ORDER_REJECT => c.as[TakeProfitOrderRejectTransaction]
-        case STOP_LOSS_ORDER => c.as[StopLossOrderTransaction]
-        case STOP_LOSS_ORDER_REJECT => c.as[StopLossOrderRejectTransaction]
-        case TRAILING_STOP_LOSS_ORDER => c.as[TrailingStopLossOrderTransaction]
-        case TRAILING_STOP_LOSS_ORDER_REJECT => c.as[TrailingStopLossOrderRejectTransaction]
-        case ORDER_FILL => c.as[OrderFillTransaction]
-        case ORDER_CANCEL => c.as[OrderCancelTransaction]
-        case ORDER_CANCEL_REJECT => c.as[OrderCancelRejectTransaction]
-        case ORDER_CLIENT_EXTENSIONS_MODIFY => c.as[OrderClientExtensionsModifyTransaction]
+        case CREATE                                => c.as[CreateTransaction]
+        case CLOSE                                 => c.as[CloseTransaction]
+        case REOPEN                                => c.as[ReopenTransaction]
+        case CLIENT_CONFIGURE                      => c.as[ClientConfigureTransaction]
+        case CLIENT_CONFIGURE_REJECT               => c.as[ClientConfigureRejectTransaction]
+        case TRANSFER_FUNDS                        => c.as[TransferFundsTransaction]
+        case TRANSFER_FUNDS_REJECT                 => c.as[TransferFundsRejectTransaction]
+        case MARKET_ORDER                          => c.as[MarketOrderTransaction]
+        case MARKET_ORDER_REJECT                   => c.as[MarketOrderRejectTransaction]
+        case LIMIT_ORDER                           => c.as[LimitOrderTransaction]
+        case LIMIT_ORDER_REJECT                    => c.as[LimitOrderRejectTransaction]
+        case STOP_ORDER                            => c.as[StopOrderTransaction]
+        case STOP_ORDER_REJECT                     => c.as[StopOrderRejectTransaction]
+        case MARKET_IF_TOUCHED_ORDER               => c.as[MarketIfTouchedOrderTransaction]
+        case MARKET_IF_TOUCHED_ORDER_REJECT        => c.as[MarketIfTouchedOrderRejectTransaction]
+        case TAKE_PROFIT_ORDER                     => c.as[TakeProfitOrderTransaction]
+        case TAKE_PROFIT_ORDER_REJECT              => c.as[TakeProfitOrderRejectTransaction]
+        case STOP_LOSS_ORDER                       => c.as[StopLossOrderTransaction]
+        case STOP_LOSS_ORDER_REJECT                => c.as[StopLossOrderRejectTransaction]
+        case TRAILING_STOP_LOSS_ORDER              => c.as[TrailingStopLossOrderTransaction]
+        case TRAILING_STOP_LOSS_ORDER_REJECT       => c.as[TrailingStopLossOrderRejectTransaction]
+        case ORDER_FILL                            => c.as[OrderFillTransaction]
+        case ORDER_CANCEL                          => c.as[OrderCancelTransaction]
+        case ORDER_CANCEL_REJECT                   => c.as[OrderCancelRejectTransaction]
+        case ORDER_CLIENT_EXTENSIONS_MODIFY        => c.as[OrderClientExtensionsModifyTransaction]
         case ORDER_CLIENT_EXTENSIONS_MODIFY_REJECT => c.as[OrderClientExtensionsModifyRejectTransaction]
-        case TRADE_CLIENT_EXTENSIONS_MODIFY => c.as[TradeClientExtensionsModifyTransaction]
+        case TRADE_CLIENT_EXTENSIONS_MODIFY        => c.as[TradeClientExtensionsModifyTransaction]
         case TRADE_CLIENT_EXTENSIONS_MODIFY_REJECT => c.as[TradeClientExtensionsModifyRejectTransaction]
-        case MARGIN_CALL_ENTER => c.as[MarginCallEnterTransaction]
-        case MARGIN_CALL_EXTEND => c.as[MarginCallExtendTransaction]
-        case MARGIN_CALL_EXIT => c.as[MarginCallExitTransaction]
-        case DELAYED_TRADE_CLOSURE => c.as[DelayedTradeClosureTransaction]
-        case DAILY_FINANCING => c.as[DailyFinancingTransaction]
-        case RESET_RESETTABLE_PL => c.as[ResetResettablePLTransaction]
+        case MARGIN_CALL_ENTER                     => c.as[MarginCallEnterTransaction]
+        case MARGIN_CALL_EXTEND                    => c.as[MarginCallExtendTransaction]
+        case MARGIN_CALL_EXIT                      => c.as[MarginCallExitTransaction]
+        case DELAYED_TRADE_CLOSURE                 => c.as[DelayedTradeClosureTransaction]
+        case DAILY_FINANCING                       => c.as[DailyFinancingTransaction]
+        case RESET_RESETTABLE_PL                   => c.as[ResetResettablePLTransaction]
       }
     }
     implicit val encodeTransaction: Encoder[Transaction] = Encoder.instance {
-      case t: CreateTransaction => t.asJson
-      case t: CloseTransaction => t.asJson
-      case t: ReopenTransaction => t.asJson
-      case t: ClientConfigureTransaction => t.asJson
-      case t: ClientConfigureRejectTransaction => t.asJson
-      case t: TransferFundsTransaction => t.asJson
-      case t: TransferFundsRejectTransaction => t.asJson
-      case t: MarketOrderTransaction => t.asJson
-      case t: MarketOrderRejectTransaction => t.asJson
-      case t: LimitOrderTransaction => t.asJson
-      case t: LimitOrderRejectTransaction => t.asJson
-      case t: StopOrderTransaction => t.asJson
-      case t: StopOrderRejectTransaction => t.asJson
-      case t: MarketIfTouchedOrderTransaction => t.asJson
-      case t: MarketIfTouchedOrderRejectTransaction => t.asJson
-      case t: TakeProfitOrderTransaction => t.asJson
-      case t: TakeProfitOrderRejectTransaction => t.asJson
-      case t: StopLossOrderTransaction => t.asJson
-      case t: StopLossOrderRejectTransaction => t.asJson
-      case t: TrailingStopLossOrderTransaction => t.asJson
-      case t: TrailingStopLossOrderRejectTransaction => t.asJson
-      case t: OrderFillTransaction => t.asJson
-      case t: OrderCancelTransaction => t.asJson
-      case t: OrderCancelRejectTransaction => t.asJson
-      case t: OrderClientExtensionsModifyTransaction => t.asJson
+      case t: CreateTransaction                            => t.asJson
+      case t: CloseTransaction                             => t.asJson
+      case t: ReopenTransaction                            => t.asJson
+      case t: ClientConfigureTransaction                   => t.asJson
+      case t: ClientConfigureRejectTransaction             => t.asJson
+      case t: TransferFundsTransaction                     => t.asJson
+      case t: TransferFundsRejectTransaction               => t.asJson
+      case t: MarketOrderTransaction                       => t.asJson
+      case t: MarketOrderRejectTransaction                 => t.asJson
+      case t: LimitOrderTransaction                        => t.asJson
+      case t: LimitOrderRejectTransaction                  => t.asJson
+      case t: StopOrderTransaction                         => t.asJson
+      case t: StopOrderRejectTransaction                   => t.asJson
+      case t: MarketIfTouchedOrderTransaction              => t.asJson
+      case t: MarketIfTouchedOrderRejectTransaction        => t.asJson
+      case t: TakeProfitOrderTransaction                   => t.asJson
+      case t: TakeProfitOrderRejectTransaction             => t.asJson
+      case t: StopLossOrderTransaction                     => t.asJson
+      case t: StopLossOrderRejectTransaction               => t.asJson
+      case t: TrailingStopLossOrderTransaction             => t.asJson
+      case t: TrailingStopLossOrderRejectTransaction       => t.asJson
+      case t: OrderFillTransaction                         => t.asJson
+      case t: OrderCancelTransaction                       => t.asJson
+      case t: OrderCancelRejectTransaction                 => t.asJson
+      case t: OrderClientExtensionsModifyTransaction       => t.asJson
       case t: OrderClientExtensionsModifyRejectTransaction => t.asJson
-      case t: TradeClientExtensionsModifyTransaction => t.asJson
+      case t: TradeClientExtensionsModifyTransaction       => t.asJson
       case t: TradeClientExtensionsModifyRejectTransaction => t.asJson
-      case t: MarginCallEnterTransaction => t.asJson
-      case t: MarginCallExtendTransaction => t.asJson
-      case t: MarginCallExitTransaction => t.asJson
-      case t: DelayedTradeClosureTransaction => t.asJson
-      case t: DailyFinancingTransaction => t.asJson
-      case t: ResetResettablePLTransaction => t.asJson
+      case t: MarginCallEnterTransaction                   => t.asJson
+      case t: MarginCallExtendTransaction                  => t.asJson
+      case t: MarginCallExitTransaction                    => t.asJson
+      case t: DelayedTradeClosureTransaction               => t.asJson
+      case t: DailyFinancingTransaction                    => t.asJson
+      case t: ResetResettablePLTransaction                 => t.asJson
     }
   }
 
@@ -637,12 +704,12 @@ package object transactions {
     implicit val decodeTransactionStreamItem: Decoder[TransactionStreamItem] = Decoder.instance { c =>
       c.downField("type").as[String].flatMap {
         case "HEARTBEAT" => c.as[TransactionHeartbeat]
-        case _ => c.as[Transaction]
+        case _           => c.as[Transaction]
       }
     }
     implicit val encodeTransactionStreamItem: Encoder[TransactionStreamItem] = Encoder.instance {
       case t: TransactionHeartbeat => t.asJson
-      case t: Transaction => t.asJson
+      case t: Transaction          => t.asJson
     }
   }
 
@@ -1181,43 +1248,50 @@ package object transactions {
   }
 
   @JsonCodec
-  case class TakeProfitDetails(price: PriceValue,
-                               timeInForce: TimeInForce = GTC,
-                               gtdTime: Option[Instant] = None,
-                               clientExtensions: Option[ClientExtensions] = None)
+  case class TakeProfitDetails(
+    price: PriceValue,
+    timeInForce: TimeInForce = GTC,
+    gtdTime: Option[Instant] = None,
+    clientExtensions: Option[ClientExtensions] = None
+  )
 
   @JsonCodec
-  case class StopLossDetails(price: PriceValue,
-                             timeInForce: TimeInForce = GTC,
-                             gtdTime: Option[Instant] = None,
-                             clientExtensions: Option[ClientExtensions] = None)
+  case class StopLossDetails(
+    price: PriceValue,
+    timeInForce: TimeInForce = GTC,
+    gtdTime: Option[Instant] = None,
+    clientExtensions: Option[ClientExtensions] = None
+  )
 
   @JsonCodec
-  case class TrailingStopLossDetails(distance: PriceValue,
-                                     timeInForce: TimeInForce = GTC,
-                                     gtdTime: Option[Instant] = None,
-                                     clientExtensions: Option[ClientExtensions] = None)
+  case class TrailingStopLossDetails(
+    distance: PriceValue,
+    timeInForce: TimeInForce = GTC,
+    gtdTime: Option[Instant] = None,
+    clientExtensions: Option[ClientExtensions] = None
+  )
 
   @JsonCodec
-  case class TradeOpen(tradeID: TradeID,
-                       units: DecimalNumber,
-                       clientExtensions: Option[ClientExtensions])
+  case class TradeOpen(tradeID: TradeID, units: DecimalNumber, clientExtensions: Option[ClientExtensions])
 
   @JsonCodec
-  case class TradeReduce(tradeID: TradeID,
-                         units: DecimalNumber,
-                         clientExtensions: Option[ClientExtensions],
-                         realizedPL: Option[AccountUnits],
-                         financing: Option[AccountUnits])
+  case class TradeReduce(
+    tradeID: TradeID,
+    units: DecimalNumber,
+    clientExtensions: Option[ClientExtensions],
+    realizedPL: Option[AccountUnits],
+    financing: Option[AccountUnits]
+  )
 
   @JsonCodec
-  case class OpenTradeFinancing(tradeID: TradeID,
-                                financing: AccountUnits)
+  case class OpenTradeFinancing(tradeID: TradeID, financing: AccountUnits)
 
   @JsonCodec
-  case class PositionFinancing(instrument: InstrumentName,
-                               financing: AccountUnits,
-                               openTradeFinancings: Seq[OpenTradeFinancing])
+  case class PositionFinancing(
+    instrument: InstrumentName,
+    financing: AccountUnits,
+    openTradeFinancings: Seq[OpenTradeFinancing]
+  )
 
   sealed trait TransactionFilter
 

@@ -15,7 +15,7 @@ trait AkkaHttpCirceSupport {
       .forContentTypes(`application/json`)
       .mapWithCharset {
         case (ByteString.empty, _) => throw Unmarshaller.NoContentException
-        case (data, charset) => data.decodeString(charset.nioCharset.name)
+        case (data, charset)       => data.decodeString(charset.nioCharset.name)
       }
 
   private val jsonStringMarshaller = Marshaller.stringMarshaller(`application/json`)
@@ -23,7 +23,9 @@ trait AkkaHttpCirceSupport {
   implicit def circeUnmarshaller[A](implicit decoder: Decoder[A]): FromEntityUnmarshaller[A] =
     jsonStringUnmarshaller.map(jawn.decode(_).fold(throw _, identity))
 
-  implicit def circeToEntityMarshaller[A](implicit encoder: Encoder[A],
-                                          printer: Json => String = Printer.noSpaces.copy(dropNullValues = true).pretty): ToEntityMarshaller[A] =
+  implicit def circeToEntityMarshaller[A](implicit
+    encoder: Encoder[A],
+    printer: Json => String = Printer.noSpaces.copy(dropNullValues = true).pretty
+  ): ToEntityMarshaller[A] =
     jsonStringMarshaller.compose(printer).compose(encoder.apply)
 }

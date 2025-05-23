@@ -6,9 +6,9 @@ import io.circe.{Decoder, Encoder}
 
 package object primitives {
 
-  type DecimalNumber = Double
-  type AccountUnits = Double
-  type Currency = String
+  type DecimalNumber  = Double
+  type AccountUnits   = Double
+  type Currency       = String
   type InstrumentName = String
 
   sealed trait InstrumentType
@@ -26,18 +26,20 @@ package object primitives {
   }
 
   @JsonCodec
-  case class Instrument(name: InstrumentName,
-                        `type`: InstrumentType,
-                        displayName: String,
-                        pipLocation: Int,
-                        displayPrecision: Int,
-                        tradeUnitsPrecision: Int,
-                        minimumTradeSize: DecimalNumber,
-                        maximumTrailingStopDistance: DecimalNumber,
-                        minimumTrailingStopDistance: DecimalNumber,
-                        maximumPositionSize: DecimalNumber,
-                        maximumOrderUnits: DecimalNumber,
-                        marginRate: DecimalNumber)
+  case class Instrument(
+    name: InstrumentName,
+    `type`: InstrumentType,
+    displayName: String,
+    pipLocation: Int,
+    displayPrecision: Int,
+    tradeUnitsPrecision: Int,
+    minimumTradeSize: DecimalNumber,
+    maximumTrailingStopDistance: DecimalNumber,
+    minimumTrailingStopDistance: DecimalNumber,
+    maximumPositionSize: DecimalNumber,
+    maximumOrderUnits: DecimalNumber,
+    marginRate: DecimalNumber
+  )
 
   sealed trait AcceptDatetimeFormat
 

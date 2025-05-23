@@ -42,33 +42,37 @@ package object pricing {
   case class UnitsAvailableDetails(long: DecimalNumber, short: DecimalNumber)
 
   @JsonCodec
-  case class UnitsAvailable(default: UnitsAvailableDetails,
-                            reduceFirst: UnitsAvailableDetails,
-                            reduceOnly: UnitsAvailableDetails,
-                            openOnly: UnitsAvailableDetails)
+  case class UnitsAvailable(
+    default: UnitsAvailableDetails,
+    reduceFirst: UnitsAvailableDetails,
+    reduceOnly: UnitsAvailableDetails,
+    openOnly: UnitsAvailableDetails
+  )
 
   @JsonCodec
-  case class Price(`type`: String,
-                   instrument: InstrumentName,
-                   time: Instant,
-                   status: PriceStatus,
-                   bids: Seq[PriceBucket],
-                   asks: Seq[PriceBucket],
-                   closeoutBid: PriceValue,
-                   closeoutAsk: PriceValue,
-                   quoteHomeConversionFactors: Option[QuoteHomeConversionFactors],
-                   unitsAvailable: Option[UnitsAvailable]) extends PricingStreamItem
+  case class Price(
+    `type`: String,
+    instrument: InstrumentName,
+    time: Instant,
+    status: PriceStatus,
+    bids: Seq[PriceBucket],
+    asks: Seq[PriceBucket],
+    closeoutBid: PriceValue,
+    closeoutAsk: PriceValue,
+    quoteHomeConversionFactors: Option[QuoteHomeConversionFactors],
+    unitsAvailable: Option[UnitsAvailable]
+  ) extends PricingStreamItem
 
   object PricingStreamItem {
     implicit val decodePricingStreamItem: Decoder[PricingStreamItem] = Decoder.instance { c =>
       c.downField("type").as[String].flatMap {
         case "HEARTBEAT" => c.as[PricingHeartbeat]
-        case _ => c.as[Price]
+        case _           => c.as[Price]
       }
     }
     implicit val encodePricingStreamItem: Encoder[PricingStreamItem] = Encoder.instance {
       case t: PricingHeartbeat => t.asJson
-      case t: Price => t.asJson
+      case t: Price            => t.asJson
     }
   }
 
